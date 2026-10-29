@@ -3,6 +3,12 @@
   "name": "SpellingBee Writing Assistant",
   "version": "1.0.0",
   "description": "Proofread selected text in online writing editors with SpellingBee.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "spellingbee-writing-assistant@spellingbee.app",
+      "strict_min_version": "109.0"
+    }
+  },
   "permissions": ["activeTab", "scripting", "storage"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "action": {

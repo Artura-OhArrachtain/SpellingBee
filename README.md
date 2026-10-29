@@ -45,4 +45,4 @@ The browser extension in `integrations/browser-extension` works with selected te
 
 The extension only reads the active page after you open it. Some online editors use custom canvases or protected frames; use that editor's integration when available.
 
-You can also download a ready-to-load package from **Browser extension** in the app header. The ZIP is configured to point back to the current app. Chrome and Edge require **Load unpacked** after extracting the ZIP; Firefox's direct developer install is temporary. One-click permanent installation requires publishing the package in the browser's extension store.
+You can also download ready-to-load packages from **Browser extension** in the app header. Both packages are configured to point back to the current app. Chrome and Edge use the ZIP with **Load unpacked**; Firefox can load the `.xpi` from `about:debugging` as a temporary add-on. One-click permanent installation requires publishing a signed package in the browser's extension store.

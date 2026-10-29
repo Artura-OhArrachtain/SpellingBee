@@ -124,6 +124,27 @@ def extension_install_page():
 
 @app.get("/download/browser-extension")
 def download_browser_extension():
+    archive = build_extension_package(firefox=False)
+    return send_file(
+        archive,
+        mimetype="application/zip",
+        as_attachment=True,
+        download_name="spellingbee-browser-extension.zip",
+    )
+
+
+@app.get("/download/firefox-addon")
+def download_firefox_addon():
+    archive = build_extension_package(firefox=True)
+    return send_file(
+        archive,
+        mimetype="application/x-xpinstall",
+        as_attachment=True,
+        download_name="spellingbee-firefox-addon.xpi",
+    )
+
+
+def build_extension_package(firefox: bool) -> io.BytesIO:
     archive = io.BytesIO()
     with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
         for file_path in sorted(EXTENSION_DIR.iterdir()):
@@ -132,15 +153,19 @@ def download_browser_extension():
             if file_path.name == "config.json":
                 content = json.dumps({"apiUrl": request.url_root.rstrip("/")}).encode("utf-8")
                 bundle.writestr(file_path.name, content)
+            elif firefox and file_path.name == "manifest.json":
+                manifest = json.loads(file_path.read_text(encoding="utf-8"))
+                manifest["browser_specific_settings"] = {
+                    "gecko": {
+                        "id": "spellingbee-writing-assistant@spellingbee.app",
+                        "strict_min_version": "109.0",
+                    }
+                }
+                bundle.writestr(file_path.name, json.dumps(manifest, indent=2))
             else:
                 bundle.write(file_path, arcname=file_path.name)
     archive.seek(0)
-    return send_file(
-        archive,
-        mimetype="application/zip",
-        as_attachment=True,
-        download_name="spellingbee-browser-extension.zip",
-    )
+    return archive
 
 
 @app.get("/service-worker.js")
