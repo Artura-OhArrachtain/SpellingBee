@@ -69,3 +69,40 @@ function showStatus(message, isError = false) {
   status.classList.toggle('error', isError);
   status.hidden = false;
 }
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {
+      // The checker still works when service workers are unavailable.
+    });
+  });
+}
+
+const installButton = document.querySelector('#install-button');
+const installHelp = document.querySelector('#install-help');
+let installPrompt;
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  installButton.hidden = false;
+});
+
+installButton.addEventListener('click', async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = undefined;
+  installButton.hidden = true;
+});
+
+window.addEventListener('appinstalled', () => {
+  installButton.hidden = true;
+  installHelp.hidden = true;
+});
+
+const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (isAppleMobile && !window.matchMedia('(display-mode: standalone)').matches) {
+  installHelp.hidden = false;
+}

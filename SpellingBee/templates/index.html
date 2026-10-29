@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f7f3">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>SpellingBee — Writing assistant</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+  <link rel="icon" href="{{ url_for('static', filename='icon.svg') }}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
 </head>
@@ -13,6 +17,7 @@
     <header class="topbar">
       <a class="brand" href="/" aria-label="SpellingBee home"><span class="brand-mark">✳</span> SpellingBee</a>
       <span class="top-note">Your thoughtful writing companion</span>
+      <button id="install-button" class="install-button" type="button" hidden>Install app</button>
     </header>
 
     <section class="hero" aria-labelledby="page-title">
@@ -48,7 +53,7 @@
       <button id="replace-button" class="replace-button" type="button">Use this version</button>
     </section>
 
-    <footer class="page-footer"><span>✳</span> Write with confidence.</footer>
+    <footer class="page-footer"><span>✳</span> Write with confidence. <span id="install-help" hidden>On iPhone or iPad, tap Share, then Add to Home Screen.</span></footer>
   </main>
 </body>
 </html>
