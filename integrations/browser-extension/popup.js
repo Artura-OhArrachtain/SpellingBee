@@ -10,8 +10,11 @@ let activeTabId;
 document.addEventListener('DOMContentLoaded', initialize);
 
 async function initialize() {
-  const saved = await chrome.storage.local.get(['apiUrl']);
-  apiUrlField.value = saved.apiUrl || 'http://127.0.0.1:5000';
+  const [saved, packaged] = await Promise.all([
+    chrome.storage.local.get(['apiUrl']),
+    fetch(chrome.runtime.getURL('config.json')).then((response) => response.json()),
+  ]);
+  apiUrlField.value = saved.apiUrl || packaged.apiUrl || 'http://127.0.0.1:5000';
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   activeTabId = tab?.id;
   if (!activeTabId || !/^https?:/.test(tab.url || '')) {

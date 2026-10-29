@@ -9,6 +9,8 @@ body { margin: 0; min-height: 100vh; background: #f8f7f3; color: var(--ink); fon
 .brand-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: #e5eee4; color: var(--green); font-size: 20px; }
 .top-note { color: var(--muted); font-size: 12px; }
 .install-button { padding: 9px 12px; border: 1px solid #cfd9cb; background: #edf2ea; color: var(--green-dark); font-size: 11px; }
+.extension-link { color: var(--green); font-size: 11px; font-weight: 600; text-decoration: none; }
+.extension-link:hover { text-decoration: underline; }
 .hero { max-width: 660px; margin: 76px auto 38px; text-align: center; }
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #56735b; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; }
 .eyebrow span { width: 7px; height: 7px; border-radius: 50%; background: #a8c2a2; }
@@ -53,5 +55,5 @@ h2 { margin: 5px 0 0; font-family: 'Playfair Display', Georgia, serif; font-size
 .spinner { width: 12px; height: 12px; border: 2px solid #ffffff88; border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 [hidden] { display: none !important; }
-@media (max-width: 600px) { .page-shell { width: min(100% - 28px, 900px); } .topbar { min-height: 68px; flex-wrap: wrap; padding: 10px 0; } .top-note { display: none; } .install-button { margin-left: auto; } .hero { margin: 55px auto 30px; } .hero p { font-size: 14px; } .editor-card, .result-card { padding: 18px 16px 14px; } .privacy-note { max-width: 145px; text-align: right; line-height: 1.4; } textarea { min-height: 190px; } .editor-footer { align-items: flex-start; } .editor-actions { flex-wrap: wrap; justify-content: flex-end; } .open-document-button, #check-button { padding: 11px 12px; } }
+@media (max-width: 600px) { .page-shell { width: min(100% - 28px, 900px); } .topbar { min-height: 68px; flex-wrap: wrap; padding: 10px 0; } .top-note { display: none; } .extension-link { margin-left: auto; } .install-button { margin-left: 0; } .hero { margin: 55px auto 30px; } .hero p { font-size: 14px; } .editor-card, .result-card { padding: 18px 16px 14px; } .privacy-note { max-width: 145px; text-align: right; line-height: 1.4; } textarea { min-height: 190px; } .editor-footer { align-items: flex-start; } .editor-actions { flex-wrap: wrap; justify-content: flex-end; } .open-document-button, #check-button { padding: 11px 12px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }

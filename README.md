@@ -41,6 +41,8 @@ The browser extension in `integrations/browser-extension` works with selected te
 1. Open your browser's extensions page, enable developer mode, and choose **Load unpacked** (Chrome/Edge) or **Load Temporary Add-on** (Firefox).
 2. Select the `integrations/browser-extension` folder.
 3. Set the SpellingBee app address in the extension popup. The browser asks you to allow the extension to connect to that address.
-4. Select text in a supported writing editor (or focus its text field), open the extension, review the suggestion, and choose **Replace in page**.
+4. Select text in a supported writing editor (or focus its text field), open the extension, press **Save** once and approve the app connection, then review suggestions and choose **Replace in page**.
 
 The extension only reads the active page after you open it. Some online editors use custom canvases or protected frames; use that editor's integration when available.
+
+You can also download a ready-to-load package from **Browser extension** in the app header. The ZIP is configured to point back to the current app. Chrome and Edge require **Load unpacked** after extracting the ZIP; Firefox's direct developer install is temporary. One-click permanent installation requires publishing the package in the browser's extension store.

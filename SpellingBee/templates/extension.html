@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f3">
+  <title>Install the SpellingBee browser extension</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    .install-card { max-width: 690px; margin: 48px auto; padding: clamp(22px, 5vw, 38px); border: 1px solid var(--line); border-radius: 15px; background: var(--paper); }
+    .install-card h1 { font-size: clamp(34px, 6vw, 46px); }
+    .install-card p, .install-card li { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .download-link { display: inline-flex; margin: 14px 0 22px; padding: 13px 17px; border-radius: 8px; background: var(--green); color: white; font-size: 13px; font-weight: 600; text-decoration: none; }
+    .download-link:hover { background: var(--green-dark); }
+    .install-card h2 { margin-top: 26px; font-size: 19px; }
+    .install-card ol { padding-left: 21px; }
+    .back-link { color: var(--green); font-size: 12px; text-decoration: none; }
+    @media (max-width: 600px) { .install-card { margin: 28px auto; } }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="SpellingBee home"><span class="brand-mark">✳</span> SpellingBee</a>
+      <a class="back-link" href="/">Back to checker</a>
+    </header>
+    <section class="install-card">
+      <div class="eyebrow"><span></span> BROWSER EXTENSION</div>
+      <h1>Check writing where you write.</h1>
+      <p>Download the extension package. It is preconfigured to connect to this SpellingBee app.</p>
+      <a class="download-link" href="{{ url_for('download_browser_extension') }}">Download extension (.zip)</a>
+
+      <h2>Install in Chrome or Edge</h2>
+      <ol>
+        <li>Unzip the downloaded file into a folder you can keep.</li>
+        <li>Open <code>chrome://extensions</code> or <code>edge://extensions</code> and turn on <strong>Developer mode</strong>.</li>
+        <li>Choose <strong>Load unpacked</strong> and select the unzipped folder containing <code>manifest.json</code>.</li>
+        <li>Open an online writing page, select text or click in its editor, then open SpellingBee from the extensions menu.</li>
+        <li>The first time, press <strong>Save</strong> in the extension popup and allow it to connect to this SpellingBee app.</li>
+      </ol>
+
+      <h2>Install in Firefox</h2>
+      <ol>
+        <li>Unzip the download.</li>
+        <li>Open <code>about:debugging#/runtime/this-firefox</code>, choose <strong>Load Temporary Add-on</strong>, and select <code>manifest.json</code>.</li>
+        <li>Open an online writing page, select text or click in its editor, then open SpellingBee from the toolbar.</li>
+        <li>The first time, press <strong>Save</strong> in the extension popup and allow it to connect to this SpellingBee app.</li>
+      </ol>
+      <p>Firefox temporary add-ons are removed when Firefox closes. Permanent installation requires publishing through Mozilla Add-ons. Google Docs has a separate sidebar integration under <code>integrations/google-docs</code>.</p>
+    </section>
+  </main>
+</body>
+</html>
