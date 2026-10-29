@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f3">
+  <title>SpellingBee — Writing assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="SpellingBee home"><span class="brand-mark">✳</span> SpellingBee</a>
+      <span class="top-note">Your thoughtful writing companion</span>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow"><span></span> SPELLING &amp; GRAMMAR</div>
+      <h1 id="page-title">Make every word <em>count.</em></h1>
+      <p>Clear, confident writing starts here. Paste your text and let your AI writing assistant help polish it.</p>
+    </section>
+
+    <section class="editor-card" aria-label="AI proofreading tool">
+      <form id="proofread-form">
+        <div class="editor-heading">
+          <label for="source-text">Your text</label>
+          <span class="privacy-note"><span class="lock-icon">◈</span> Your text is only sent when you choose Check my writing</span>
+        </div>
+        <textarea id="source-text" name="text" maxlength="12000" placeholder="Start writing or paste your text here…" aria-describedby="text-count" required></textarea>
+        <div class="editor-footer">
+          <span id="text-count" class="text-count">0 / 12,000</span>
+          <button id="check-button" type="submit"><span aria-hidden="true">✦</span> Check my writing</button>
+        </div>
+      </form>
+      <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+    </section>
+
+    <section id="result-card" class="result-card" aria-labelledby="result-title" hidden>
+      <div class="result-heading">
+        <div><div class="eyebrow result-eyebrow">AI SUGGESTION</div><h2 id="result-title">A polished version</h2></div>
+        <button id="copy-button" class="copy-button" type="button">Copy text</button>
+      </div>
+      <p id="corrected-text" class="corrected-text"></p>
+      <div id="explanation-wrap" class="explanation-wrap" hidden>
+        <h3>What changed</h3><p id="explanation"></p>
+      </div>
+      <button id="replace-button" class="replace-button" type="button">Use this version</button>
+    </section>
+
+    <footer class="page-footer"><span>✳</span> Write with confidence.</footer>
+  </main>
+</body>
+</html>
