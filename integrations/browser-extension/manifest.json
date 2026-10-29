@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "SpellingBee Writing Assistant",
+  "version": "1.0.0",
+  "description": "Proofread selected text in online writing editors with SpellingBee.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_title": "Check writing with SpellingBee",
+    "default_popup": "popup.html"
+  }
+}
