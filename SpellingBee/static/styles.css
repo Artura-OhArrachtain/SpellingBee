@@ -24,6 +24,12 @@ h1 em { color: var(--green); }
 textarea { display: block; width: 100%; min-height: 205px; margin: 17px 0 13px; resize: vertical; border: 0; outline: 0; color: var(--ink); background: transparent; font: 400 15px/1.7 'DM Sans', sans-serif; }
 textarea::placeholder { color: #b0b0a7; }
 .editor-footer { padding-top: 13px; border-top: 1px solid #efeee8; }
+.editor-actions { display: flex; align-items: center; gap: 9px; }
+.open-document-button { padding: 11px 13px; border: 1px solid #d8ddd2; background: #fffefa; color: var(--green-dark); }
+.open-document-button:hover:not(:disabled) { background: #f0f3ed; }
+.open-document-button:disabled { cursor: wait; opacity: .65; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); border: 0; }
+.file-note { margin: 12px 4px 0; color: #929388; font-size: 10px; line-height: 1.5; }
 .text-count { color: #9b9c92; font-size: 11px; }
 button { border: 0; border-radius: 8px; font: 600 12px 'DM Sans', sans-serif; cursor: pointer; transition: background .15s ease, transform .15s ease; }
 #check-button { display: inline-flex; align-items: center; gap: 8px; padding: 12px 17px; background: var(--green); color: white; }
@@ -47,5 +53,5 @@ h2 { margin: 5px 0 0; font-family: 'Playfair Display', Georgia, serif; font-size
 .spinner { width: 12px; height: 12px; border: 2px solid #ffffff88; border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 [hidden] { display: none !important; }
-@media (max-width: 600px) { .page-shell { width: min(100% - 28px, 900px); } .topbar { min-height: 68px; flex-wrap: wrap; padding: 10px 0; } .top-note { display: none; } .install-button { margin-left: auto; } .hero { margin: 55px auto 30px; } .hero p { font-size: 14px; } .editor-card, .result-card { padding: 18px 16px 14px; } .privacy-note { max-width: 135px; text-align: right; line-height: 1.4; } textarea { min-height: 190px; } #check-button { padding: 11px 12px; } }
+@media (max-width: 600px) { .page-shell { width: min(100% - 28px, 900px); } .topbar { min-height: 68px; flex-wrap: wrap; padding: 10px 0; } .top-note { display: none; } .install-button { margin-left: auto; } .hero { margin: 55px auto 30px; } .hero p { font-size: 14px; } .editor-card, .result-card { padding: 18px 16px 14px; } .privacy-note { max-width: 145px; text-align: right; line-height: 1.4; } textarea { min-height: 190px; } .editor-footer { align-items: flex-start; } .editor-actions { flex-wrap: wrap; justify-content: flex-end; } .open-document-button, #check-button { padding: 11px 12px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }

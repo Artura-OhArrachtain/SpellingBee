@@ -18,3 +18,5 @@ SpellingBee is an installable web app (PWA). Deploy it to a host with HTTPS, the
 For local network testing, find the computer's LAN IP and open `http://<computer-ip>:5000` from another device on the same network. Browsers require a secure HTTPS connection to install PWAs from network addresses; `localhost` is exempt for local development.
 
 The proofread endpoint accepts up to 12,000 characters per request. Text is sent to the configured AI provider only after the user presses **Check my writing**.
+
+You can also choose **Open a document** to load text from TXT, Markdown, DOCX, or text-based PDF files without copying and pasting. Documents up to 10 MB are read in memory and are not saved. Extracted text must fit the 12,000-character checker limit. Scanned PDFs and legacy `.doc` files are not supported.

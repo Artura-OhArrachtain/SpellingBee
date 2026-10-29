@@ -7,9 +7,44 @@ const correctedText = document.querySelector('#corrected-text');
 const explanationWrap = document.querySelector('#explanation-wrap');
 const explanation = document.querySelector('#explanation');
 const counter = document.querySelector('#text-count');
+const documentFile = document.querySelector('#document-file');
+const openDocumentButton = document.querySelector('#open-document-button');
 
 editor.addEventListener('input', () => {
   counter.textContent = `${editor.value.length.toLocaleString()} / 12,000`;
+});
+
+openDocumentButton.addEventListener('click', () => documentFile.click());
+
+documentFile.addEventListener('change', async () => {
+  const file = documentFile.files?.[0];
+  if (!file) return;
+  if (editor.value.trim() && !window.confirm('Opening a document will replace the text in the editor. Continue?')) {
+    documentFile.value = '';
+    return;
+  }
+
+  openDocumentButton.disabled = true;
+  openDocumentButton.textContent = 'Opening…';
+  showStatus(`Opening ${file.name}…`);
+  resultCard.hidden = true;
+  try {
+    const formData = new FormData();
+    formData.append('document', file);
+    const response = await fetch('/api/open-document', { method: 'POST', body: formData });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not open this document.');
+    editor.value = result.text;
+    counter.textContent = `${editor.value.length.toLocaleString()} / 12,000`;
+    editor.focus();
+    showStatus(`Opened ${file.name}. Review the text, then choose Check my writing.`);
+  } catch (error) {
+    showStatus(error.message || 'Could not open this document. Please try another file.', true);
+  } finally {
+    openDocumentButton.disabled = false;
+    openDocumentButton.textContent = 'Open a document';
+    documentFile.value = '';
+  }
 });
 
 form.addEventListener('submit', async (event) => {

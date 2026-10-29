@@ -30,15 +30,20 @@
       <form id="proofread-form">
         <div class="editor-heading">
           <label for="source-text">Your text</label>
-          <span class="privacy-note"><span class="lock-icon">◈</span> Your text is only sent when you choose Check my writing</span>
+          <span class="privacy-note"><span class="lock-icon">◈</span> Text is sent to this app only when you open a file or check your writing</span>
         </div>
         <textarea id="source-text" name="text" maxlength="12000" placeholder="Start writing or paste your text here…" aria-describedby="text-count" required></textarea>
         <div class="editor-footer">
           <span id="text-count" class="text-count">0 / 12,000</span>
-          <button id="check-button" type="submit"><span aria-hidden="true">✦</span> Check my writing</button>
+          <div class="editor-actions">
+            <input id="document-file" class="visually-hidden" type="file" accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf">
+            <button id="open-document-button" class="open-document-button" type="button">Open a document</button>
+            <button id="check-button" type="submit"><span aria-hidden="true">✦</span> Check my writing</button>
+          </div>
         </div>
       </form>
       <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+      <p class="file-note">Supported files: TXT, Markdown, DOCX, and text-based PDF. Files are read for this check and not saved.</p>
     </section>
 
     <section id="result-card" class="result-card" aria-labelledby="result-title" hidden>

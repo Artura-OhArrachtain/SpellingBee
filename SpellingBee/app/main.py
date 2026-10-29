@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,44 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
+MAX_TEXT_LENGTH = 12000
+
+
+def extract_document_text(filename: str, content: bytes) -> str:
+    extension = Path(filename).suffix.lower()
+    if extension in {".txt", ".md", ".markdown"}:
+        try:
+            return content.decode("utf-8-sig")
+        except UnicodeDecodeError as error:
+            raise ValueError("This text file is not encoded as UTF-8.") from error
+
+    if extension == ".docx":
+        from docx import Document
+
+        document = Document(io.BytesIO(content))
+        sections = [paragraph.text for paragraph in document.paragraphs if paragraph.text.strip()]
+        for table in document.tables:
+            for row in table.rows:
+                cells = [cell.text.strip() for cell in row.cells]
+                if any(cells):
+                    sections.append("\t".join(cells))
+        return "\n".join(sections)
+
+    if extension == ".pdf":
+        from pypdf import PdfReader
+
+        reader = PdfReader(io.BytesIO(content))
+        if reader.is_encrypted:
+            raise ValueError("This PDF is password-protected. Unlock it and try again.")
+        if len(reader.pages) > 250:
+            raise ValueError("This PDF has more than 250 pages. Please open a shorter document.")
+        text = "\n\n".join(page.extract_text() or "" for page in reader.pages)
+        if not text.strip():
+            raise ValueError("No selectable text was found. Scanned image PDFs are not supported yet.")
+        return text
+
+    raise ValueError("Choose a TXT, Markdown, DOCX, or PDF document.")
 
 
 def proofread_with_ai(text: str) -> dict[str, str]:
@@ -84,6 +123,11 @@ def service_worker():
     return response
 
 
+@app.errorhandler(413)
+def request_too_large(_error):
+    return jsonify(error="The document is larger than the 10 MB upload limit."), 413
+
+
 @app.post("/api/proofread")
 def proofread():
     data = request.get_json(silent=True)
@@ -98,6 +142,28 @@ def proofread():
         return jsonify(proofread_with_ai(text))
     except RuntimeError as error:
         return jsonify(error=str(error)), 503
+
+
+@app.post("/api/open-document")
+def open_document():
+    uploaded = request.files.get("document")
+    if uploaded is None or not uploaded.filename:
+        return jsonify(error="Choose a document to open."), 400
+    try:
+        text = extract_document_text(uploaded.filename, uploaded.read())
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    except ImportError:
+        return jsonify(error="Document support is not installed. Reinstall the app requirements."), 503
+    except Exception:
+        return jsonify(error="This document could not be read. Check that it is a valid, unprotected file."), 400
+
+    text = text.strip()
+    if not text:
+        return jsonify(error="This document does not contain any text."), 400
+    if len(text) > MAX_TEXT_LENGTH:
+        return jsonify(error="This document exceeds the 12,000-character limit. Open a shorter document or select an excerpt."), 413
+    return jsonify(text=text)
 
 
 if __name__ == "__main__":
