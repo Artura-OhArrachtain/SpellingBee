@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f7f3">
-  <title>Install the SpellingBee browser extension</title>
+  <title>Download and install SpellingBee</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
     .install-card { max-width: 690px; margin: 48px auto; padding: clamp(22px, 5vw, 38px); border: 1px solid var(--line); border-radius: 15px; background: var(--paper); }
@@ -25,9 +25,20 @@
       <a class="back-link" href="/">Back to checker</a>
     </header>
     <section class="install-card">
-      <div class="eyebrow"><span></span> BROWSER EXTENSION</div>
-      <h1>Check writing where you write.</h1>
-      <p>Download the extension package. It is preconfigured to connect to this SpellingBee app.</p>
+      <div class="eyebrow"><span></span> DOWNLOAD &amp; INSTALL</div>
+      <h1>Get SpellingBee on your device.</h1>
+      <p>Choose the install option that works best for you.</p>
+
+      <h2>Windows and macOS desktop app</h2>
+      <p>Download and unzip the app, then open it. The desktop app starts SpellingBee on your computer and opens the checker in your browser. On first launch, it asks for your OpenAI API key and stores it in your local user settings.</p>
+      <a class="download-link" href="https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-Windows.zip">Download for Windows</a>
+      <a class="download-link" href="https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-macOS.zip">Download for macOS</a>
+
+      <h2>Install on phone or tablet</h2>
+      <p>Open this app in your browser. On Android, choose <strong>Install app</strong> or <strong>Add to Home screen</strong>. On iPhone or iPad, open the Share menu in Safari and choose <strong>Add to Home Screen</strong>. The app needs an HTTPS address for installation.</p>
+
+      <h2>Browser extension</h2>
+      <p>The extension packages below are preconfigured to connect to this SpellingBee app.</p>
       <a class="download-link" href="{{ url_for('download_browser_extension') }}">Download for Chrome or Edge (.zip)</a>
       <a class="download-link" href="{{ url_for('download_firefox_addon') }}">Download for Firefox (.xpi)</a>
 

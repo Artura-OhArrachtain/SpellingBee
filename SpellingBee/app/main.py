@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import sys
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -13,12 +14,20 @@ from zipfile import ZIP_DEFLATED, ZipFile
 from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+if getattr(sys, "frozen", False):
+    APP_DIR = Path(sys._MEIPASS)
+else:
+    APP_DIR = Path(__file__).resolve().parents[1]
 
-app = Flask(__name__, template_folder="../templates", static_folder="../static")
+load_dotenv(APP_DIR / ".env")
+
+app = Flask(__name__, template_folder=str(APP_DIR / "templates"), static_folder=str(APP_DIR / "static"))
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 MAX_TEXT_LENGTH = 12000
-EXTENSION_DIR = Path(__file__).resolve().parents[2] / "integrations" / "browser-extension"
+if getattr(sys, "frozen", False):
+    EXTENSION_DIR = APP_DIR / "integrations" / "browser-extension"
+else:
+    EXTENSION_DIR = Path(__file__).resolve().parents[2] / "integrations" / "browser-extension"
 
 
 def extract_document_text(filename: str, content: bytes) -> str:

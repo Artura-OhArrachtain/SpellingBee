@@ -11,6 +11,12 @@ A small Flask writing assistant that uses an OpenAI-compatible chat completions 
 5. Start the app with `python app/main.py` from the `SpellingBee` directory. It listens on all network interfaces by default; set `HOST=127.0.0.1` to limit it to this computer.
 6. Open `http://127.0.0.1:5000` on the computer running the app.
 
+## Download the desktop app
+
+Download the latest [Windows](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-Windows.zip) or [macOS](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-macOS.zip) package from Releases. Unzip it and open **SpellingBee**. On first launch, enter an OpenAI API key; it is saved in your user settings on that computer. The desktop app runs the checker locally and opens it in your default browser. Choose **Quit** in its control window to stop the local server.
+
+Desktop packages are attached to version releases. To build them, push a version tag such as `v1.0.0`.
+
 ## Use it on phones, tablets, and desktops
 
 SpellingBee is an installable web app (PWA). Deploy it to a host with HTTPS, then open its URL in a supported browser. On Android and desktop browsers, choose **Install app** (or **Add to Home Screen**). On iPhone or iPad, open the site in Safari, tap **Share**, then **Add to Home Screen**. The app shell can open offline after it has loaded once; AI proofreading needs an internet connection.
