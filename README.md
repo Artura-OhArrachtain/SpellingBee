@@ -68,7 +68,7 @@ Google Docs draws document text on a canvas, so a normal browser extension canno
 1. Open **Extensions → Apps Script** in the document.
 2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest.
 3. Save and reload the document. The integration connects automatically to `https://tab.pythonanywhere.com`.
-4. Choose **SpellingBee → Open writing checker**, select a passage, and choose **Load selected text**. SpellingBee replaces the selected passage with the corrected version and highlights the changed portions directly in the document.
+4. Choose **SpellingBee → Open writing checker**, select a passage, and choose **Mark corrections**. SpellingBee replaces the selected passage with the corrected version and highlights the changed portions directly in the document.
 
 The Docs integration connects to `https://tab.pythonanywhere.com` and replaces a selection within one paragraph to preserve surrounding formatting. Changed text is highlighted in yellow and underlined for review. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and marking flow inside Apps Script.
 

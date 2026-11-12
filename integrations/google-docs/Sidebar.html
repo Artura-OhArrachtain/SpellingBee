@@ -13,21 +13,11 @@
 </head>
 <body>
   <h2>SpellingBee</h2>
-  <p>Select a passage in the document, then check it. SpellingBee will apply and highlight suggested corrections directly in the document.</p>
-  <button id="load" class="secondary" type="button" onclick="loadSelection()">Load selected text</button>
-  <textarea id="source" placeholder="Select text in your document, then load it here."></textarea>
-  <button id="check" type="button" onclick="checkText()">Check writing</button>
+  <p>Select a passage in the document, then click the button below. SpellingBee will apply and highlight suggested corrections directly in the document.</p>
+  <button id="check" type="button" onclick="checkSelectedText()">Mark corrections</button>
   <p id="status" role="status" aria-live="polite"></p>
   <script>
-    function loadSelection() {
-      google.script.run.withSuccessHandler(function (text) {
-        document.getElementById('source').value = text;
-        document.getElementById('status').textContent = text ? 'Selected text loaded. Check it to mark corrections in the document.' : 'Select text in the document first.';
-      }).withFailureHandler(showError).getSelectedText();
-    }
-    function checkText() {
-      const text = document.getElementById('source').value.trim();
-      if (!text) return showError({ message: 'Load selected text first.' });
+    function checkSelectedText() {
       document.getElementById('check').disabled = true;
       document.getElementById('status').textContent = 'Checking and marking your writing…';
       google.script.run.withSuccessHandler(function (message) {
@@ -36,7 +26,7 @@
       }).withFailureHandler(function (error) {
         document.getElementById('check').disabled = false;
         showError(error);
-      }).checkAndMarkSelection(text);
+      }).checkAndMarkSelection();
     }
     function showError(error) {
       document.getElementById('status').textContent = error.message || 'Something went wrong.';

@@ -12,21 +12,24 @@ function showSpellingBeeSidebar() {
   DocumentApp.getUi().showSidebar(html);
 }
 
-function getSelectedText() {
+function getCurrentSelectionText() {
   const selection = DocumentApp.getActiveDocument().getSelection();
-  if (!selection) return '';
-  const pieces = selection.getRangeElements().map(function (rangeElement) {
-    const element = rangeElement.getElement();
-    if (element.getType() !== DocumentApp.ElementType.TEXT) return '';
-    const text = element.asText().getText();
-    if (!rangeElement.isPartial()) return text;
-    return text.substring(rangeElement.getStartOffset(), rangeElement.getEndOffsetInclusive() + 1);
-  });
-  return pieces.filter(Boolean).join('');
+  if (!selection) throw new Error('Select text in the document first.');
+  const ranges = selection.getRangeElements();
+  if (ranges.length !== 1 || ranges[0].getElement().getType() !== DocumentApp.ElementType.TEXT) {
+    throw new Error('Select text within one paragraph so corrections can be marked in place.');
+  }
+  const range = ranges[0];
+  const textElement = range.getElement().asText();
+  const start = range.isPartial() ? range.getStartOffset() : 0;
+  const end = range.isPartial() ? range.getEndOffsetInclusive() : textElement.getText().length - 1;
+  const text = textElement.getText().substring(start, end + 1);
+  if (!text.trim()) throw new Error('Select some text in the document first.');
+  return text;
 }
 
-function checkAndMarkSelection(text) {
-  if (!text || !text.trim()) throw new Error('Select text in the document first.');
+function checkAndMarkSelection() {
+  const text = getCurrentSelectionText();
   const response = UrlFetchApp.fetch(SPELLINGBEE_APP_URL + '/api/proofread', {
     method: 'post',
     contentType: 'application/json',
@@ -56,7 +59,7 @@ function markSelection(original, corrected) {
   const end = range.isPartial() ? range.getEndOffsetInclusive() : textElement.getText().length - 1;
   const selectedText = textElement.getText().substring(start, end + 1);
   if (selectedText !== original) {
-    throw new Error('The document selection changed. Load the selected text again, then check it.');
+    throw new Error('The document selection changed. Select the passage again, then check it.');
   }
   const changedRanges = findChangedRanges(original, corrected);
 
