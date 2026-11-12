@@ -43,6 +43,8 @@ Proofreading accepts up to 12,000 characters per request. Uploaded TXT, Markdown
 
 Download the latest [Windows](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-Windows.zip) or [macOS](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-macOS.zip) package from Releases. Unzip it and open **SpellingBee**. On first launch, enter an OpenAI API key; it is saved in your user settings on that computer. The desktop app runs the checker locally and opens it in your default browser. Choose **Quit** in its control window to stop the local server.
 
+The packaged browser extension defaults to the hosted app at `https://tab.pythonanywhere.com`. You can change the app address in the extension popup to another HTTP or HTTPS SpellingBee deployment.
+
 Desktop packages are attached to version releases. To build them, push a version tag such as `v1.0.0`.
 
 ## Use it on phones, tablets, and desktops
