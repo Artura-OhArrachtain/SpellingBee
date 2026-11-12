@@ -23,7 +23,6 @@ load_dotenv(APP_DIR / ".env")
 
 app = Flask(__name__, template_folder=str(APP_DIR / "templates"), static_folder=str(APP_DIR / "static"))
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
-MAX_TEXT_LENGTH = 12000
 if getattr(sys, "frozen", False):
     EXTENSION_DIR = APP_DIR / "integrations" / "browser-extension"
 else:
@@ -208,8 +207,6 @@ def proofread():
     text = data["text"].strip()
     if not text:
         return jsonify(error="Enter some text to check."), 400
-    if len(text) > 12000:
-        return jsonify(error="Text must be 12,000 characters or fewer."), 413
     try:
         return jsonify(proofread_with_ai(text))
     except RuntimeError as error:
@@ -233,8 +230,6 @@ def open_document():
     text = text.strip()
     if not text:
         return jsonify(error="This document does not contain any text."), 400
-    if len(text) > MAX_TEXT_LENGTH:
-        return jsonify(error="This document exceeds the 12,000-character limit. Open a shorter document or select an excerpt."), 413
     return jsonify(text=text)
 
 

@@ -17,7 +17,7 @@ let textBeforeReplacement = '';
 
 function updateTextMeta() {
   const words = editor.value.trim() ? editor.value.trim().split(/\s+/).length : 0;
-  counter.textContent = `${words.toLocaleString()} ${words === 1 ? 'word' : 'words'} · ${editor.value.length.toLocaleString()} / 12,000`;
+  counter.textContent = `${words.toLocaleString()} ${words === 1 ? 'word' : 'words'} · ${editor.value.length.toLocaleString()} characters`;
   clearButton.disabled = !editor.value;
 }
 
@@ -75,8 +75,8 @@ documentFile.addEventListener('change', async () => {
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const text = editor.value.trim();
-  if (!text) {
+  const text = editor.value;
+  if (!text.trim()) {
     editor.focus();
     showStatus('Add some text first, then I can check it.', true);
     return;

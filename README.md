@@ -37,7 +37,7 @@ Configuration can be provided as environment variables or in `SpellingBee/.env` 
 | `HOST` | `0.0.0.0` | Listening address |
 | `PORT` | `5000` | Listening port |
 
-Proofreading accepts up to 12,000 characters per request. Uploaded TXT, Markdown, DOCX, and text-based PDF files are limited to 10 MB and are processed in memory rather than saved.
+Proofreading has no application-level word or character limit. Uploaded TXT, Markdown, DOCX, and text-based PDF files are limited to 10 MB and are processed in memory rather than saved. Very large requests can still be limited by the configured AI provider's context window.
 
 ## Download the desktop app
 
@@ -55,9 +55,9 @@ SpellingBee is an installable web app (PWA). Deploy it to a host with HTTPS, the
 
 For local network testing, find the computer's LAN IP and open `http://<computer-ip>:5000` from another device on the same network. Browsers require a secure HTTPS connection to install PWAs from network addresses; `localhost` is exempt for local development.
 
-The proofread endpoint accepts up to 12,000 characters per request. Text is sent to the configured AI provider only after the user presses **Check my writing**.
+Text is sent to the configured AI provider only after the user presses **Check my writing**.
 
-You can also choose **Open a document** to load text from TXT, Markdown, DOCX, or text-based PDF files without copying and pasting. Documents up to 10 MB are read in memory and are not saved. Extracted text must fit the 12,000-character checker limit. Scanned PDFs and legacy `.doc` files are not supported.
+You can also choose **Open a document** to load text from TXT, Markdown, DOCX, or text-based PDF files without copying and pasting. Documents up to 10 MB are read in memory and are not saved. Scanned PDFs and legacy `.doc` files are not supported.
 
 ## Check text in online editors
 
@@ -68,9 +68,9 @@ Google Docs draws document text on a canvas, so a normal browser extension canno
 1. Open **Extensions → Apps Script** in the document.
 2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest.
 3. Save and reload the document. The integration connects automatically to `https://tab.pythonanywhere.com`.
-4. Choose **SpellingBee → Open writing checker**. Load selected text for a passage you want to replace, or choose **Load whole document** to run the checker without selecting text. Review the suggestion before choosing **Replace selected text**.
+4. Choose **SpellingBee → Open writing checker**, select a passage, and choose **Load selected text**. SpellingBee replaces the selected passage with the corrected version and highlights the changed portions directly in the document.
 
-The Docs integration connects to `https://tab.pythonanywhere.com` and replaces a selection within one paragraph to preserve surrounding formatting. Whole-document checking is review-only; load a selection before replacing text. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and replacement flow inside Apps Script.
+The Docs integration connects to `https://tab.pythonanywhere.com` and replaces a selection within one paragraph to preserve surrounding formatting. Changed text is highlighted in yellow and underlined for review. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and marking flow inside Apps Script.
 
 ### Other online editors
 

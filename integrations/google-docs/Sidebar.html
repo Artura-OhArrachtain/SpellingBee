@@ -13,60 +13,30 @@
 </head>
 <body>
   <h2>SpellingBee</h2>
-  <p>Select a passage in the document, then load it here. Text is sent to <strong>tab.pythonanywhere.com</strong> only when you check it.</p>
+  <p>Select a passage in the document, then check it. SpellingBee will apply and highlight suggested corrections directly in the document.</p>
   <button id="load" class="secondary" type="button" onclick="loadSelection()">Load selected text</button>
-  <button id="load-document" class="secondary" type="button" onclick="loadDocument()">Load whole document</button>
-  <textarea id="source" maxlength="12000" placeholder="Select text in your document, then load it here."></textarea>
+  <textarea id="source" placeholder="Select text in your document, then load it here."></textarea>
   <button id="check" type="button" onclick="checkText()">Check writing</button>
   <p id="status" role="status" aria-live="polite"></p>
-  <section id="result" hidden>
-    <h3>Suggestion</h3>
-    <textarea id="corrected" readonly></textarea>
-    <p id="explanation"></p>
-    <button id="replace" type="button" onclick="replaceText()">Replace selected text</button>
-  </section>
   <script>
-    let selectionLoaded = false;
-
     function loadSelection() {
       google.script.run.withSuccessHandler(function (text) {
-        selectionLoaded = true;
         document.getElementById('source').value = text;
-        document.getElementById('replace').hidden = false;
-        document.getElementById('status').textContent = text ? 'Selected text loaded.' : 'Select text in the document first.';
+        document.getElementById('status').textContent = text ? 'Selected text loaded. Check it to mark corrections in the document.' : 'Select text in the document first.';
       }).withFailureHandler(showError).getSelectedText();
-    }
-    function loadDocument() {
-      google.script.run.withSuccessHandler(function (text) {
-        selectionLoaded = false;
-        document.getElementById('source').value = text;
-        document.getElementById('replace').hidden = true;
-        document.getElementById('status').textContent = 'Whole document loaded. Review the suggestion below; replacement is available for selected text.';
-      }).withFailureHandler(showError).getDocumentText();
     }
     function checkText() {
       const text = document.getElementById('source').value.trim();
-      if (!text) return showError({ message: 'Load or enter some text first.' });
+      if (!text) return showError({ message: 'Load selected text first.' });
       document.getElementById('check').disabled = true;
-      document.getElementById('status').textContent = 'Checking your writing…';
-      google.script.run.withSuccessHandler(function (answer) {
-        document.getElementById('corrected').value = answer.corrected_text;
-        document.getElementById('explanation').textContent = answer.explanation || '';
-        document.getElementById('result').hidden = false;
+      document.getElementById('status').textContent = 'Checking and marking your writing…';
+      google.script.run.withSuccessHandler(function (message) {
         document.getElementById('check').disabled = false;
-        document.getElementById('status').textContent = selectionLoaded
-          ? 'Review the suggestion before replacing your selection.'
-          : 'Review the suggestion. Load selected text to enable replacement.';
+        document.getElementById('status').textContent = message;
       }).withFailureHandler(function (error) {
         document.getElementById('check').disabled = false;
         showError(error);
-      }).proofreadSelection(text);
-    }
-    function replaceText() {
-      if (!selectionLoaded) return showError({ message: 'Load selected text before replacing a passage.' });
-      google.script.run.withSuccessHandler(function (message) {
-        document.getElementById('status').textContent = message;
-      }).withFailureHandler(showError).replaceSelectionWithText(document.getElementById('corrected').value);
+      }).checkAndMarkSelection(text);
     }
     function showError(error) {
       document.getElementById('status').textContent = error.message || 'Something went wrong.';
