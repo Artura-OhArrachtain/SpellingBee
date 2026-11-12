@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { padding: 14px; color: #22251f; font: 13px/1.5 Arial, sans-serif; }
+    p { color: #77796f; }
+    textarea { box-sizing: border-box; width: 100%; min-height: 145px; padding: 9px; border: 1px solid #dedfd7; border-radius: 6px; font: inherit; }
+    button { margin: 8px 6px 0 0; padding: 9px 12px; border: 0; border-radius: 6px; background: #365d45; color: white; cursor: pointer; }
+    button.secondary { border: 1px solid #cfd9cb; background: #edf2ea; color: #294b37; }
+    #status { min-height: 20px; color: #5f725d; }
+  </style>
+</head>
+<body>
+  <h2>SpellingBee</h2>
+  <p>Select a passage in the document, then load it here. The text is sent to your SpellingBee server when you check it.</p>
+  <button id="load" class="secondary" type="button" onclick="loadSelection()">Load selected text</button>
+  <textarea id="source" maxlength="12000" placeholder="Select text in your document, then load it here."></textarea>
+  <button id="check" type="button" onclick="checkText()">Check writing</button>
+  <p id="status" role="status" aria-live="polite"></p>
+  <section id="result" hidden>
+    <h3>Suggestion</h3>
+    <textarea id="corrected" readonly></textarea>
+    <p id="explanation"></p>
+    <button type="button" onclick="replaceText()">Replace selected text</button>
+  </section>
+  <script>
+    function loadSelection() {
+      google.script.run.withSuccessHandler(function (text) {
+        document.getElementById('source').value = text;
+        document.getElementById('status').textContent = text ? 'Selected text loaded.' : 'Select text in the document first.';
+      }).withFailureHandler(showError).getSelectedText();
+    }
+    function checkText() {
+      const text = document.getElementById('source').value.trim();
+      if (!text) return showError({ message: 'Load or enter some text first.' });
+      document.getElementById('check').disabled = true;
+      document.getElementById('status').textContent = 'Checking your writing…';
+      google.script.run.withSuccessHandler(function (answer) {
+        document.getElementById('corrected').value = answer.corrected_text;
+        document.getElementById('explanation').textContent = answer.explanation || '';
+        document.getElementById('result').hidden = false;
+        document.getElementById('check').disabled = false;
+        document.getElementById('status').textContent = 'Review the suggestion before replacing your selection.';
+      }).withFailureHandler(function (error) {
+        document.getElementById('check').disabled = false;
+        showError(error);
+      }).proofreadSelection(text);
+    }
+    function replaceText() {
+      google.script.run.withSuccessHandler(function (message) {
+        document.getElementById('status').textContent = message;
+      }).withFailureHandler(showError).replaceSelectionWithText(document.getElementById('corrected').value);
+    }
+    function showError(error) {
+      document.getElementById('status').textContent = error.message || 'Something went wrong.';
+    }
+  </script>
+</body>
+</html>

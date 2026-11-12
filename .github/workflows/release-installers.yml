@@ -1,0 +1,61 @@
+name: Build desktop installers
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            separator: ";"
+            asset: SpellingBee-Windows.zip
+          - os: macos-latest
+            separator: ":"
+            asset: SpellingBee-macOS.zip
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install app and packaging dependencies
+        run: python -m pip install -r requirements/requirements.txt pyinstaller
+        working-directory: SpellingBee
+      - name: Package desktop app
+        run: >-
+          pyinstaller --noconfirm --clean --onefile --windowed --name SpellingBee
+          --add-data "templates${{ matrix.separator }}templates"
+          --add-data "static${{ matrix.separator }}static"
+          --add-data "../integrations/browser-extension${{ matrix.separator }}integrations/browser-extension"
+          desktop.py
+        working-directory: SpellingBee
+      - name: Create Windows download
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path dist/SpellingBee.exe -DestinationPath dist/${{ matrix.asset }}
+        working-directory: SpellingBee
+      - name: Create macOS download
+        if: runner.os == 'macOS'
+        run: cd dist && ditto -c -k --sequesterRsrc --keepParent SpellingBee.app ${{ matrix.asset }}
+        working-directory: SpellingBee
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: SpellingBee/dist/${{ matrix.asset }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*

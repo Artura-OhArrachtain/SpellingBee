@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpellingBee</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><span class="mark">✳</span><div><h1>SpellingBee</h1><p>Online writing assistant</p></div></header>
+    <form id="settings-form">
+      <label for="api-url">SpellingBee app address</label>
+      <div class="server-row"><input id="api-url" type="url" required placeholder="https://your-spellingbee-app.example"><button type="submit">Save</button></div>
+    </form>
+    <p class="hint">Select text in an editor, or click inside a text field, then open this extension. It works with common web editors. Google Docs users can use the SpellingBee menu add-on.</p>
+    <label for="source-text">Text to check</label>
+    <textarea id="source-text" maxlength="12000" placeholder="Select text in your page to load it here…"></textarea>
+    <button id="check-button" class="primary" type="button">Check writing</button>
+    <p id="status" role="status" aria-live="polite"></p>
+    <section id="result" hidden>
+      <label for="corrected-text">Suggestion</label>
+      <textarea id="corrected-text" readonly></textarea>
+      <p id="explanation"></p>
+      <button id="replace-button" class="secondary" type="button">Replace in page</button>
+    </section>
+  </main>
+</body>
+</html>
