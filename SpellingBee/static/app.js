@@ -58,7 +58,7 @@ documentFile.addEventListener('change', async () => {
     const formData = new FormData();
     formData.append('document', file);
     const response = await fetch('/api/open-document', { method: 'POST', body: formData });
-    const result = await response.json();
+    const result = await readJsonResponse(response);
     if (!response.ok) throw new Error(result.error || 'Could not open this document.');
     editor.value = result.text;
     updateTextMeta();
@@ -93,7 +93,7 @@ form.addEventListener('submit', async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
     });
-    const result = await response.json();
+    const result = await readJsonResponse(response);
     if (!response.ok) throw new Error(result.error || 'Something went wrong. Please try again.');
     correctedText.textContent = result.corrected_text;
     explanation.textContent = result.explanation;
@@ -146,6 +146,15 @@ function showStatus(message, isError = false) {
   status.textContent = message;
   status.classList.toggle('error', isError);
   status.hidden = false;
+}
+
+async function readJsonResponse(response) {
+  const body = await response.text();
+  try {
+    return JSON.parse(body);
+  } catch {
+    throw new Error(`SpellingBee returned a web page instead of JSON (HTTP ${response.status}). Check the server address and deployment.`);
+  }
 }
 
 updateTextMeta();

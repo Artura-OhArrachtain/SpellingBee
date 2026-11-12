@@ -199,6 +199,20 @@ def request_too_large(_error):
     return jsonify(error="The document is larger than the 10 MB upload limit."), 413
 
 
+@app.errorhandler(404)
+def api_not_found(error):
+    if request.path.startswith("/api/"):
+        return jsonify(error="SpellingBee API endpoint not found."), 404
+    return error
+
+
+@app.errorhandler(405)
+def api_method_not_allowed(error):
+    if request.path.startswith("/api/"):
+        return jsonify(error="HTTP method not allowed for this SpellingBee API endpoint."), 405
+    return error
+
+
 @app.post("/api/proofread")
 def proofread():
     data = request.get_json(silent=True)

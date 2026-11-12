@@ -81,7 +81,7 @@ checkButton.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
     });
-    const data = await response.json();
+    const data = await readJsonResponse(response);
     if (!response.ok) throw new Error(data.error || 'Could not check the selected text.');
     correctedField.value = data.corrected_text;
     document.querySelector('#explanation').textContent = data.explanation || '';
@@ -111,6 +111,15 @@ document.querySelector('#replace-button').addEventListener('click', async () => 
 function setStatus(message, isError = false) {
   status.textContent = message;
   status.classList.toggle('error', isError);
+}
+
+async function readJsonResponse(response) {
+  const body = await response.text();
+  try {
+    return JSON.parse(body);
+  } catch {
+    throw new Error(`SpellingBee returned a web page instead of JSON (HTTP ${response.status}). Check the app address.`);
+  }
 }
 
 function isSupportedPageUrl(url) {

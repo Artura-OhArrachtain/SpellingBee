@@ -37,12 +37,20 @@ function checkAndMarkSelection() {
     muteHttpExceptions: true,
   });
   const status = response.getResponseCode();
-  const result = JSON.parse(response.getContentText());
+  const result = parseJsonResponse(response);
   if (status < 200 || status >= 300) throw new Error(result.error || 'The SpellingBee app could not check this text.');
   markSelection(text, result.corrected_text);
   return result.corrected_text.trim() === text.trim()
     ? 'No corrections suggested.'
     : 'Corrections were applied and highlighted in the document.';
+}
+
+function parseJsonResponse(response) {
+  try {
+    return JSON.parse(response.getContentText());
+  } catch (error) {
+    throw new Error('SpellingBee returned a web page instead of JSON. Check that https://tab.pythonanywhere.com is serving the SpellingBee API.');
+  }
 }
 
 function markSelection(original, corrected) {
