@@ -63,6 +63,13 @@ function getSelectedText() {
   return pieces.filter(Boolean).join('');
 }
 
+function getDocumentText() {
+  const text = DocumentApp.getActiveDocument().getBody().getText().trim();
+  if (!text) throw new Error('The document does not contain any text.');
+  if (text.length > 12000) throw new Error('This document has more than 12,000 characters. Select a shorter passage.');
+  return text;
+}
+
 function proofreadSelection(text) {
   if (!text || !text.trim()) throw new Error('Select text in the document first.');
   if (text.length > 12000) throw new Error('Select 12,000 characters or fewer.');

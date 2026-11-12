@@ -36,9 +36,9 @@ Google Docs draws document text on a canvas, so a normal browser extension canno
 1. Open **Extensions → Apps Script** in the document.
 2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest.
 3. Save and reload the document. In the new **SpellingBee** menu, choose **Set app address** and enter your HTTPS app URL. SpellingBee checks the address before saving it.
-4. Select text in the document, choose **SpellingBee → Open writing checker**, load the selection, and check it. Review the suggestion before choosing **Replace selected text**.
+4. Choose **SpellingBee → Open writing checker**. Load selected text for a passage you want to replace, or choose **Load whole document** to run the checker without selecting text. Review the suggestion before choosing **Replace selected text**.
 
-The Docs integration replaces a selection within one paragraph to preserve surrounding formatting. It does not change the whole document at once. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and replacement flow inside Apps Script.
+The Docs integration replaces a selection within one paragraph to preserve surrounding formatting. Whole-document checking is review-only; load a selection before replacing text. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and replacement flow inside Apps Script.
 
 ### Other online editors
 

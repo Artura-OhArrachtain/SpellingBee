@@ -15,6 +15,7 @@
   <h2>SpellingBee</h2>
   <p>Select a passage in the document, then load it here. The text is sent to your SpellingBee server when you check it.</p>
   <button id="load" class="secondary" type="button" onclick="loadSelection()">Load selected text</button>
+  <button id="load-document" class="secondary" type="button" onclick="loadDocument()">Load whole document</button>
   <textarea id="source" maxlength="12000" placeholder="Select text in your document, then load it here."></textarea>
   <button id="check" type="button" onclick="checkText()">Check writing</button>
   <p id="status" role="status" aria-live="polite"></p>
@@ -22,14 +23,26 @@
     <h3>Suggestion</h3>
     <textarea id="corrected" readonly></textarea>
     <p id="explanation"></p>
-    <button type="button" onclick="replaceText()">Replace selected text</button>
+    <button id="replace" type="button" onclick="replaceText()">Replace selected text</button>
   </section>
   <script>
+    let selectionLoaded = false;
+
     function loadSelection() {
       google.script.run.withSuccessHandler(function (text) {
+        selectionLoaded = true;
         document.getElementById('source').value = text;
+        document.getElementById('replace').hidden = false;
         document.getElementById('status').textContent = text ? 'Selected text loaded.' : 'Select text in the document first.';
       }).withFailureHandler(showError).getSelectedText();
+    }
+    function loadDocument() {
+      google.script.run.withSuccessHandler(function (text) {
+        selectionLoaded = false;
+        document.getElementById('source').value = text;
+        document.getElementById('replace').hidden = true;
+        document.getElementById('status').textContent = 'Whole document loaded. Review the suggestion below; replacement is available for selected text.';
+      }).withFailureHandler(showError).getDocumentText();
     }
     function checkText() {
       const text = document.getElementById('source').value.trim();
@@ -41,13 +54,16 @@
         document.getElementById('explanation').textContent = answer.explanation || '';
         document.getElementById('result').hidden = false;
         document.getElementById('check').disabled = false;
-        document.getElementById('status').textContent = 'Review the suggestion before replacing your selection.';
+        document.getElementById('status').textContent = selectionLoaded
+          ? 'Review the suggestion before replacing your selection.'
+          : 'Review the suggestion. Load selected text to enable replacement.';
       }).withFailureHandler(function (error) {
         document.getElementById('check').disabled = false;
         showError(error);
       }).proofreadSelection(text);
     }
     function replaceText() {
+      if (!selectionLoaded) return showError({ message: 'Load selected text before replacing a passage.' });
       google.script.run.withSuccessHandler(function (message) {
         document.getElementById('status').textContent = message;
       }).withFailureHandler(showError).replaceSelectionWithText(document.getElementById('corrected').value);
