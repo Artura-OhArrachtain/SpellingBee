@@ -3,6 +3,13 @@
   "name": "SpellingBee Writing Assistant",
   "version": "1.0.0",
   "description": "Proofread selected text in online writing editors with SpellingBee.",
+  "homepage_url": "https://github.com/Artura-OhArrachtain/SpellingBee",
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "browser_specific_settings": {
     "gecko": {
       "id": "spellingbee-writing-assistant@spellingbee.app",
@@ -13,6 +20,10 @@
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "action": {
     "default_title": "Check writing with SpellingBee",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png"
+    }
   }
 }
