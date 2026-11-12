@@ -4,6 +4,7 @@ function onOpen() {
   DocumentApp.getUi()
     .createMenu('SpellingBee')
     .addItem('Open writing checker', 'showSpellingBeeSidebar')
+    .addItem('Set app address', 'configureSpellingBee')
     .addToUi();
 }
 function showSpellingBeeSidebar() {
@@ -12,11 +13,6 @@ function showSpellingBeeSidebar() {
   DocumentApp.getUi().showSidebar(html);
 }
 
-<<<<<<< HEAD
-function checkSelection() {
-  const text = getCurrentSelectionText();
-  const response = UrlFetchApp.fetch(SPELLINGBEE_APP_URL + '/api/proofread', {
-=======
 function configureSpellingBee() {
   const ui = DocumentApp.getUi();
   const result = ui.prompt(
@@ -68,14 +64,13 @@ function getSelectedText() {
   return pieces.filter(Boolean).join('');
 }
 
-function proofreadSelection(text) {
+function checkSelection() {
+  const text = getCurrentSelectionText();
   if (!text || !text.trim()) throw new Error('Select text in the document first.');
   if (text.length > 12000) throw new Error('Select 12,000 characters or fewer.');
-  const baseUrl = PropertiesService.getScriptProperties().getProperty('SPELLINGBEE_APP_URL');
-  if (!baseUrl) throw new Error('Use the SpellingBee menu and choose Set app address first.');
+  const baseUrl = PropertiesService.getScriptProperties().getProperty('SPELLINGBEE_APP_URL') || SPELLINGBEE_APP_URL;
 
   const response = UrlFetchApp.fetch(baseUrl + '/api/proofread', {
->>>>>>> d72bc15 (Validate Google Docs app connection)
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify({ text: text }),
