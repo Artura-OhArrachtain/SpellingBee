@@ -9,9 +9,34 @@ const explanation = document.querySelector('#explanation');
 const counter = document.querySelector('#text-count');
 const documentFile = document.querySelector('#document-file');
 const openDocumentButton = document.querySelector('#open-document-button');
+const clearButton = document.querySelector('#clear-button');
+const resultSummary = document.querySelector('#result-summary');
+const replaceButton = document.querySelector('#replace-button');
+const undoButton = document.querySelector('#undo-button');
+let textBeforeReplacement = '';
 
-editor.addEventListener('input', () => {
-  counter.textContent = `${editor.value.length.toLocaleString()} / 12,000`;
+function updateTextMeta() {
+  const words = editor.value.trim() ? editor.value.trim().split(/\s+/).length : 0;
+  counter.textContent = `${words.toLocaleString()} ${words === 1 ? 'word' : 'words'} · ${editor.value.length.toLocaleString()} / 12,000`;
+  clearButton.disabled = !editor.value;
+}
+
+editor.addEventListener('input', updateTextMeta);
+editor.addEventListener('keydown', (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+clearButton.addEventListener('click', () => {
+  if (editor.value.trim() && !window.confirm('Clear the text in the editor?')) return;
+  editor.value = '';
+  updateTextMeta();
+  resultCard.hidden = true;
+  undoButton.hidden = true;
+  status.hidden = true;
+  editor.focus();
 });
 
 openDocumentButton.addEventListener('click', () => documentFile.click());
@@ -28,6 +53,7 @@ documentFile.addEventListener('change', async () => {
   openDocumentButton.textContent = 'Opening…';
   showStatus(`Opening ${file.name}…`);
   resultCard.hidden = true;
+  undoButton.hidden = true;
   try {
     const formData = new FormData();
     formData.append('document', file);
@@ -35,7 +61,7 @@ documentFile.addEventListener('change', async () => {
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'Could not open this document.');
     editor.value = result.text;
-    counter.textContent = `${editor.value.length.toLocaleString()} / 12,000`;
+    updateTextMeta();
     editor.focus();
     showStatus(`Opened ${file.name}. Review the text, then choose Check my writing.`);
   } catch (error) {
@@ -72,13 +98,20 @@ form.addEventListener('submit', async (event) => {
     correctedText.textContent = result.corrected_text;
     explanation.textContent = result.explanation;
     explanationWrap.hidden = !result.explanation;
+    const unchanged = result.corrected_text.trim() === text;
+    resultSummary.textContent = unchanged
+      ? 'No changes suggested.'
+      : `${result.corrected_text.length.toLocaleString()} characters · Review before using`;
+    resultSummary.classList.toggle('no-changes', unchanged);
+    replaceButton.hidden = unchanged;
+    undoButton.hidden = true;
     resultCard.hidden = false;
     showStatus('Your review is ready. Take a look at the suggestion below.');
   } catch (error) {
     showStatus(error.message || 'Could not check your text. Please try again.', true);
   } finally {
     button.disabled = false;
-    button.innerHTML = '<span aria-hidden="true">✦</span> Check my writing';
+    button.innerHTML = '<span aria-hidden="true">✦</span> Check writing';
   }
 });
 
@@ -92,11 +125,21 @@ document.querySelector('#copy-button').addEventListener('click', async (event) =
   }
 });
 
-document.querySelector('#replace-button').addEventListener('click', () => {
+replaceButton.addEventListener('click', () => {
+  textBeforeReplacement = editor.value;
   editor.value = correctedText.textContent;
-  counter.textContent = `${editor.value.length.toLocaleString()} / 12,000`;
+  updateTextMeta();
+  undoButton.hidden = false;
   editor.focus();
   showStatus('Replaced your text with the suggestion.');
+});
+
+undoButton.addEventListener('click', () => {
+  editor.value = textBeforeReplacement;
+  updateTextMeta();
+  undoButton.hidden = true;
+  editor.focus();
+  showStatus('Restored your previous text.');
 });
 
 function showStatus(message, isError = false) {
@@ -104,6 +147,8 @@ function showStatus(message, isError = false) {
   status.classList.toggle('error', isError);
   status.hidden = false;
 }
+
+updateTextMeta();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

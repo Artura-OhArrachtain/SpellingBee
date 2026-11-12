@@ -27,11 +27,15 @@ textarea { display: block; width: 100%; min-height: 205px; margin: 17px 0 13px; 
 textarea::placeholder { color: #b0b0a7; }
 .editor-footer { padding-top: 13px; border-top: 1px solid #efeee8; }
 .editor-actions { display: flex; align-items: center; gap: 9px; }
+.text-button { padding: 10px 8px; background: transparent; color: var(--green); }
+.text-button:hover:not(:disabled) { background: #eef2eb; }
+.text-button:disabled { color: #b4b6ad; cursor: not-allowed; }
 .open-document-button { padding: 11px 13px; border: 1px solid #d8ddd2; background: #fffefa; color: var(--green-dark); }
 .open-document-button:hover:not(:disabled) { background: #f0f3ed; }
 .open-document-button:disabled { cursor: wait; opacity: .65; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); border: 0; }
 .file-note { margin: 12px 4px 0; color: #929388; font-size: 10px; line-height: 1.5; }
+kbd { padding: 1px 4px; border: 1px solid #d9d9d0; border-bottom-width: 2px; border-radius: 4px; background: #f7f7f2; color: #6e7068; font-size: 10px; }
 .text-count { color: #9b9c92; font-size: 11px; }
 button { border: 0; border-radius: 8px; font: 600 12px 'DM Sans', sans-serif; cursor: pointer; transition: background .15s ease, transform .15s ease; }
 #check-button { display: inline-flex; align-items: center; gap: 8px; padding: 12px 17px; background: var(--green); color: white; }
@@ -42,11 +46,14 @@ button { border: 0; border-radius: 8px; font: 600 12px 'DM Sans', sans-serif; cu
 .result-card { margin-top: 17px; padding: 23px 25px; }
 .result-eyebrow { font-size: 9px; }
 h2 { margin: 5px 0 0; font-family: 'Playfair Display', Georgia, serif; font-size: 22px; }
+.result-summary { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.result-summary.no-changes { color: var(--green); }
 .copy-button { padding: 9px 12px; border: 1px solid var(--line); background: white; color: var(--green); }
 .corrected-text { margin: 18px 0; padding: 17px; border-radius: 9px; background: #f7f8f3; color: #34382f; font-size: 14px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
 .explanation-wrap { margin: 0 0 16px; }
 .explanation-wrap h3 { margin: 0 0 5px; color: #596c55; font-size: 11px; }
 .explanation-wrap p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.result-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .replace-button { padding: 10px 13px; background: #e9f0e7; color: var(--green-dark); }
 .replace-button:hover, .copy-button:hover { background: #dfeadd; }
 .page-footer { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 7px; margin: 38px 0 28px; color: #96978d; font-size: 11px; }
@@ -55,5 +62,5 @@ h2 { margin: 5px 0 0; font-family: 'Playfair Display', Georgia, serif; font-size
 .spinner { width: 12px; height: 12px; border: 2px solid #ffffff88; border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 [hidden] { display: none !important; }
-@media (max-width: 600px) { .page-shell { width: min(100% - 28px, 900px); } .topbar { min-height: 68px; flex-wrap: wrap; padding: 10px 0; } .top-note { display: none; } .extension-link { margin-left: auto; } .install-button { margin-left: 0; } .hero { margin: 55px auto 30px; } .hero p { font-size: 14px; } .editor-card, .result-card { padding: 18px 16px 14px; } .privacy-note { max-width: 145px; text-align: right; line-height: 1.4; } textarea { min-height: 190px; } .editor-footer { align-items: flex-start; } .editor-actions { flex-wrap: wrap; justify-content: flex-end; } .open-document-button, #check-button { padding: 11px 12px; } }
+@media (max-width: 600px) { .page-shell { width: min(100% - 28px, 900px); } .topbar { min-height: 68px; flex-wrap: wrap; padding: 10px 0; } .top-note { display: none; } .extension-link { margin-left: auto; } .install-button { margin-left: 0; } .hero { margin: 55px auto 30px; } .hero p { font-size: 14px; } .editor-card, .result-card { padding: 18px 16px 14px; } .privacy-note { max-width: 145px; text-align: right; line-height: 1.4; } textarea { min-height: 190px; } .editor-footer { align-items: flex-start; } .editor-actions { flex-wrap: wrap; justify-content: flex-end; } .open-document-button, #check-button { padding: 11px 12px; } .result-heading { align-items: flex-start; } .result-heading .copy-button { flex-shrink: 0; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }

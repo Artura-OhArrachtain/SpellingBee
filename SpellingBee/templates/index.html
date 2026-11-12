@@ -35,28 +35,32 @@
         </div>
         <textarea id="source-text" name="text" maxlength="12000" placeholder="Start writing or paste your text here…" aria-describedby="text-count" required></textarea>
         <div class="editor-footer">
-          <span id="text-count" class="text-count">0 / 12,000</span>
+          <span id="text-count" class="text-count">0 words · 0 / 12,000</span>
           <div class="editor-actions">
             <input id="document-file" class="visually-hidden" type="file" accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf">
+            <button id="clear-button" class="text-button" type="button" disabled>Clear</button>
             <button id="open-document-button" class="open-document-button" type="button">Open a document</button>
-            <button id="check-button" type="submit"><span aria-hidden="true">✦</span> Check my writing</button>
+            <button id="check-button" type="submit"><span aria-hidden="true">✦</span> Check writing</button>
           </div>
         </div>
       </form>
       <p id="status" class="status" role="status" aria-live="polite" hidden></p>
-      <p class="file-note">Supported files: TXT, Markdown, DOCX, and text-based PDF. Files are read for this check and not saved.</p>
+      <p class="file-note">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to check. Supported files: TXT, Markdown, DOCX, and text-based PDF.</p>
     </section>
 
     <section id="result-card" class="result-card" aria-labelledby="result-title" hidden>
       <div class="result-heading">
-        <div><div class="eyebrow result-eyebrow">AI SUGGESTION</div><h2 id="result-title">A polished version</h2></div>
+        <div><div class="eyebrow result-eyebrow">AI SUGGESTION</div><h2 id="result-title">A polished version</h2><p id="result-summary" class="result-summary"></p></div>
         <button id="copy-button" class="copy-button" type="button">Copy text</button>
       </div>
       <p id="corrected-text" class="corrected-text"></p>
       <div id="explanation-wrap" class="explanation-wrap" hidden>
         <h3>What changed</h3><p id="explanation"></p>
       </div>
-      <button id="replace-button" class="replace-button" type="button">Use this version</button>
+      <div class="result-actions">
+        <button id="replace-button" class="replace-button" type="button">Use this version</button>
+        <button id="undo-button" class="text-button" type="button" hidden>Undo replacement</button>
+      </div>
     </section>
 
     <footer class="page-footer"><span>✳</span> Write with confidence. <span id="install-help" hidden>On iPhone or iPad, tap Share, then Add to Home Screen.</span></footer>
