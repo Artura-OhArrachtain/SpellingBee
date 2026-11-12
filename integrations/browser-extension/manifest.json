@@ -13,6 +13,9 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "spellingbee-writing-assistant@spellingbee.app",
+      "data_collection_permissions": {
+        "required": ["websiteContent"]
+      },
       "strict_min_version": "109.0"
     }
   },
