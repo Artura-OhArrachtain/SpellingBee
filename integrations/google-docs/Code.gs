@@ -16,14 +16,14 @@ function configureSpellingBee() {
   const ui = DocumentApp.getUi();
   const result = ui.prompt(
     'Connect SpellingBee',
-    'Enter the HTTPS address of your SpellingBee app (for example, https://spellingbee.example.com).',
+    'Enter the HTTP or HTTPS address of your SpellingBee app (for example, http://localhost:5000 or https://spellingbee.example.com).',
     ui.ButtonSet.OK_CANCEL,
   );
   if (result.getSelectedButton() !== ui.Button.OK) return;
 
   const address = result.getResponseText().trim().replace(/\/$/, '');
-  if (!/^https:\/\//i.test(address)) {
-    ui.alert('Use an HTTPS address for your SpellingBee app.');
+  if (!/^https?:\/\//i.test(address)) {
+    ui.alert('Use an HTTP or HTTPS address for your SpellingBee app.');
     return;
   }
 

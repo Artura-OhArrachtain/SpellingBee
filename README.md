@@ -63,7 +63,7 @@ Google Docs draws document text on a canvas, so a normal browser extension canno
 
 1. Open **Extensions → Apps Script** in the document.
 2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest.
-3. Save and reload the document. In the new **SpellingBee** menu, choose **Set app address** and enter your HTTPS app URL. SpellingBee checks the address before saving it.
+3. Save and reload the document. In the new **SpellingBee** menu, choose **Set app address** and enter your HTTP or HTTPS app URL. SpellingBee checks the address before saving it. The address must be reachable by Google Apps Script; `localhost` and private LAN addresses generally are not.
 4. Choose **SpellingBee → Open writing checker**. Load selected text for a passage you want to replace, or choose **Load whole document** to run the checker without selecting text. Review the suggestion before choosing **Replace selected text**.
 
 The Docs integration replaces a selection within one paragraph to preserve surrounding formatting. Whole-document checking is review-only; load a selection before replacing text. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and replacement flow inside Apps Script.
@@ -106,4 +106,4 @@ Before submitting, deploy the app over HTTPS, publish its `/privacy` page, repla
 
 ## Deployment
 
-Deploy the Flask app behind HTTPS when making it available to other devices or when installing the PWA and browser extension. The desktop installer workflow runs when a tag matching `v*` is pushed and publishes Windows and macOS archives to a GitHub Release.
+Deploy the Flask app behind HTTPS when making it available to other devices or when installing the PWA. The browser extension can connect to HTTP or HTTPS app addresses, including `localhost` and LAN addresses for local testing. The desktop installer workflow runs when a tag matching `v*` is pushed and publishes Windows and macOS archives to a GitHub Release.

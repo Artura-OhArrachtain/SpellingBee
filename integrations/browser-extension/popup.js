@@ -20,8 +20,8 @@ async function initialize() {
   checkButton.disabled = !consentCheckbox.checked;
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   activeTabId = tab?.id;
-  if (!activeTabId || !/^https?:/.test(tab.url || '')) {
-    setStatus('Open a writing page first. Browser-internal pages cannot be read.', true);
+  if (!activeTabId || !isSupportedPageUrl(tab.url || '')) {
+    setStatus('Open a writing page first. HTTP, HTTPS, and local-file pages are supported; browser-internal pages cannot be read.', true);
     return;
   }
   if (new URL(tab.url).hostname === 'docs.google.com') {
@@ -111,6 +111,10 @@ document.querySelector('#replace-button').addEventListener('click', async () => 
 function setStatus(message, isError = false) {
   status.textContent = message;
   status.classList.toggle('error', isError);
+}
+
+function isSupportedPageUrl(url) {
+  return /^(https?|file):/i.test(url);
 }
 
 function captureEditorText() {

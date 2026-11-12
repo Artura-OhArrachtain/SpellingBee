@@ -20,7 +20,7 @@
     }
   },
   "permissions": ["activeTab", "scripting", "storage"],
-  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "optional_host_permissions": ["http://*/*", "https://*/*", "file:///*"],
   "action": {
     "default_title": "Check writing with SpellingBee",
     "default_popup": "popup.html",
