@@ -130,11 +130,14 @@ def extension_install_page():
     return render_template("extension.html")
 
 
+<<<<<<< HEAD
 @app.get("/privacy")
 def privacy_policy():
     return render_template("privacy.html")
 
 
+=======
+>>>>>>> d72bc15 (Validate Google Docs app connection)
 @app.get("/api/health")
 def health():
     return jsonify(status="ok")
