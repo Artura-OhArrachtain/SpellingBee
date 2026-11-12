@@ -37,16 +37,25 @@ jobs:
         working-directory: SpellingBee
       - name: Create Windows download
         if: runner.os == 'Windows'
-        run: Compress-Archive -Path dist/SpellingBee.exe -DestinationPath dist/${{ matrix.asset }}
+        run: |
+          Compress-Archive -Path dist/SpellingBee.exe -DestinationPath dist/${{ matrix.asset }}
+          choco install innosetup --no-progress --limit-output
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" ..\packaging\SpellingBee.iss
         working-directory: SpellingBee
       - name: Create macOS download
         if: runner.os == 'macOS'
-        run: cd dist && ditto -c -k --sequesterRsrc --keepParent SpellingBee.app ${{ matrix.asset }}
+        run: |
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent SpellingBee.app ${{ matrix.asset }}
+          mkdir -p dmg
+          cp -R SpellingBee.app dmg/
+          ln -s /Applications dmg/Applications
+          hdiutil create -volname SpellingBee -srcfolder dmg -ov -format UDZO SpellingBee-macOS.dmg
         working-directory: SpellingBee
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset }}
-          path: SpellingBee/dist/${{ matrix.asset }}
+          path: SpellingBee/dist/SpellingBee-*
 
   release:
     needs: build

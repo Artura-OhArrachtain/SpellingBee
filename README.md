@@ -41,7 +41,9 @@ Proofreading accepts up to 12,000 characters per request. Uploaded TXT, Markdown
 
 ## Download the desktop app
 
-Download the latest [Windows](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-Windows.zip) or [macOS](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-macOS.zip) package from Releases. Unzip it and open **SpellingBee**. On first launch, enter an OpenAI API key; it is saved in your user settings on that computer. The desktop app runs the checker locally and opens it in your default browser. Choose **Quit** in its control window to stop the local server.
+Download the latest [Windows installer](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-Windows-Setup.exe) or [macOS disk image](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-macOS.dmg) from Releases. On Windows, run the installer and use the Start Menu or desktop shortcut. On macOS, open the disk image and drag SpellingBee to Applications. Portable [Windows](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-Windows.zip) and [macOS](https://github.com/Artura-OhArrachtain/SpellingBee/releases/latest/download/SpellingBee-macOS.zip) downloads are also available. On first launch, enter an OpenAI API key; it is saved in your user settings on that computer. The desktop app runs the checker locally and opens it in your default browser. Choose **Quit** in its control window to stop the local server.
+
+Because the desktop builds are not signed yet, macOS may require Control-clicking the app and choosing **Open** the first time, and Windows SmartScreen may require choosing **More info → Run anyway**.
 
 The packaged browser extension defaults to the hosted app at `https://tab.pythonanywhere.com`. You can change the app address in the extension popup to another HTTP or HTTPS SpellingBee deployment.
 
