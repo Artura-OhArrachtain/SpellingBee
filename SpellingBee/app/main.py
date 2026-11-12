@@ -131,6 +131,11 @@ def extension_install_page():
     return render_template("extension.html")
 
 
+@app.get("/api/health")
+def health():
+    return jsonify(status="ok")
+
+
 @app.get("/download/browser-extension")
 def download_browser_extension():
     archive = build_extension_package(firefox=False)

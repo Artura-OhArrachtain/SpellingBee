@@ -26,6 +26,26 @@ function configureSpellingBee() {
     ui.alert('Use an HTTPS address for your SpellingBee app.');
     return;
   }
+
+  try {
+    const response = UrlFetchApp.fetch(address + '/api/health', {
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    if (response.getResponseCode() !== 200) {
+      ui.alert('That address is not responding as a SpellingBee app. Check the URL and try again.');
+      return;
+    }
+    const health = JSON.parse(response.getContentText());
+    if (health.status !== 'ok') {
+      ui.alert('That address is not responding as a SpellingBee app. Check the URL and try again.');
+      return;
+    }
+  } catch (error) {
+    ui.alert('SpellingBee could not be reached. Check the URL and your internet connection.');
+    return;
+  }
+
   PropertiesService.getScriptProperties().setProperty('SPELLINGBEE_APP_URL', address);
   ui.alert('SpellingBee is connected. Open the SpellingBee menu to check selected text.');
 }
