@@ -35,10 +35,10 @@ Google Docs draws document text on a canvas, so a normal browser extension canno
 
 1. Open **Extensions → Apps Script** in the document.
 2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest.
-3. Save and reload the document. In the new **SpellingBee** menu, choose **Set app address** and enter your HTTPS app URL.
+3. Save and reload the document. In the new **SpellingBee** menu, choose **Set app address** and enter your HTTPS app URL. SpellingBee checks the address before saving it.
 4. Select text in the document, choose **SpellingBee → Open writing checker**, load the selection, and check it. Review the suggestion before choosing **Replace selected text**.
 
-The Docs integration replaces a selection within one paragraph to preserve surrounding formatting. It does not change the whole document at once.
+The Docs integration replaces a selection within one paragraph to preserve surrounding formatting. It does not change the whole document at once. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and replacement flow inside Apps Script.
 
 ### Other online editors
 
@@ -49,6 +49,12 @@ The browser extension in `integrations/browser-extension` works with selected te
 3. Set the SpellingBee app address in the extension popup. The browser asks you to allow the extension to connect to that address.
 4. Select text in a supported writing editor (or focus its text field), open the extension, press **Save** once and approve the app connection, then review suggestions and choose **Replace in page**.
 
-The extension only reads the active page after you open it. Some online editors use custom canvases or protected frames; use that editor's integration when available.
+The extension only reads the active page after you open it. Some online editors use custom canvases or protected frames; use that editor's integration when available. The extension detects `docs.google.com` and directs you to the Google Docs sidebar instead of trying to edit the document.
 
 You can also download ready-to-load packages from **Browser extension** in the app header. Both packages are configured to point back to the current app. Chrome and Edge use the ZIP with **Load unpacked**; Firefox can load the `.xpi` from `about:debugging` as a temporary add-on. One-click permanent installation requires publishing a signed package in the browser's extension store.
+
+### Browser extension store listing
+
+The extension includes Manifest V3 metadata and PNG icons for store submission. The prepared upload package is available at `dist/spellingbee-browser-extension-1.0.0.zip`, and the listing text, permission explanations, data-use disclosure, and screenshot checklist are in `docs/browser-extension-store-listing.md`.
+
+Before submitting, deploy the app over HTTPS, publish its `/privacy` page, replace the privacy policy placeholder URL in the listing draft, and capture the required store screenshots. The extension's privacy policy is available at `/privacy` on every app deployment.
