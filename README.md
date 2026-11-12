@@ -2,14 +2,42 @@
 
 A small Flask writing assistant that uses an OpenAI-compatible chat completions API to suggest spelling, grammar, punctuation, and clarity improvements.
 
+SpellingBee can run as a local web app, an installable progressive web app (PWA), or a packaged desktop app. It also includes integrations for Google Docs and browser-based editors.
+
+## Requirements
+
+- Python 3.10 or newer
+- An API key for an OpenAI-compatible chat completions provider
+- A modern browser (Chrome, Edge, Firefox, or Safari)
+
 ## Run locally
 
-1. Create and activate a virtual environment.
-2. Install dependencies: `python -m pip install -r requirements/requirements.txt`
-3. Set `OPENAI_API_KEY` in your environment. The key stays on the server and is never sent to the browser.
-4. Optionally set `OPENAI_MODEL` (defaults to `gpt-4o-mini`) and `OPENAI_BASE_URL` (defaults to `https://api.openai.com/v1`).
-5. Start the app with `python app/main.py` from the `SpellingBee` directory. It listens on all network interfaces by default; set `HOST=127.0.0.1` to limit it to this computer.
-6. Open `http://127.0.0.1:5000` on the computer running the app.
+From the repository root:
+
+```bash
+cd SpellingBee
+python -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+python -m pip install -r requirements/requirements.txt
+export OPENAI_API_KEY="your-api-key" # Windows PowerShell: $env:OPENAI_API_KEY="your-api-key"
+python app/main.py
+```
+
+Open `http://127.0.0.1:5000`. The server listens on all network interfaces by default; set `HOST=127.0.0.1` to limit it to this computer. Set `PORT` to use a different port.
+
+### Configuration
+
+Configuration can be provided as environment variables or in `SpellingBee/.env` for local development. The API key stays on the server and is never sent to the browser.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | — | Required provider API key |
+| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | OpenAI-compatible API base URL |
+| `OPENAI_MODEL` | `gpt-4o-mini` | Chat model used for proofreading |
+| `HOST` | `0.0.0.0` | Listening address |
+| `PORT` | `5000` | Listening port |
+
+Proofreading accepts up to 12,000 characters per request. Uploaded TXT, Markdown, DOCX, and text-based PDF files are limited to 10 MB and are processed in memory rather than saved.
 
 ## Download the desktop app
 
@@ -58,3 +86,24 @@ You can also download ready-to-load packages from **Browser extension** in the a
 The extension includes Manifest V3 metadata and PNG icons for store submission. The prepared upload package is available at `dist/spellingbee-browser-extension-1.0.0.zip`, and the listing text, permission explanations, data-use disclosure, and screenshot checklist are in `docs/browser-extension-store-listing.md`.
 
 Before submitting, deploy the app over HTTPS, publish its `/privacy` page, replace the privacy policy placeholder URL in the listing draft, and capture the required store screenshots. The extension's privacy policy is available at `/privacy` on every app deployment.
+
+## Project layout
+
+- `SpellingBee/app/main.py` — Flask application and API endpoints
+- `SpellingBee/templates/` and `SpellingBee/static/` — web interface and PWA assets
+- `SpellingBee/desktop.py` — local desktop launcher
+- `integrations/browser-extension/` — Chrome, Edge, and Firefox extension source
+- `integrations/google-docs/` — Google Docs Apps Script sidebar integration
+- `docs/` — publishing and store-listing documentation
+
+## API endpoints
+
+- `GET /` — web app
+- `GET /api/health` — health check
+- `POST /api/proofread` — proofread JSON `{ "text": "..." }`
+- `POST /api/open-document` — extract text from an uploaded supported document
+- `GET /privacy` — privacy policy
+
+## Deployment
+
+Deploy the Flask app behind HTTPS when making it available to other devices or when installing the PWA and browser extension. The desktop installer workflow runs when a tag matching `v*` is pushed and publishes Windows and macOS archives to a GitHub Release.
