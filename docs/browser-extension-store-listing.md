@@ -35,6 +35,10 @@ Google Docs uses the separate SpellingBee sidebar integration because Google Doc
 
 The extension handles user-provided writing text solely to provide proofreading suggestions. It does not sell data, use data for advertising, collect browsing history, or run background collection. Text is sent to the user-configured SpellingBee app only after the user selects **Check writing**. The privacy policy is hosted at `/privacy` on the SpellingBee app deployment.
 
+Before the first request, the extension shows a data notice and requires the user to confirm that the selected text will be sent to the configured SpellingBee app. Changing the app address clears that confirmation and requires consent again.
+
+For the Chrome Web Store privacy form, disclose that the extension handles user-provided website content or text from the active editor for the single purpose of proofreading it through the user's configured app. State that the data is transmitted only after the user's action, is not sold or used for advertising, and is not collected in the background. These disclosures must match the hosted [privacy policy](https://YOUR-DEPLOYED-APP/privacy).
+
 ## Submission assets
 
 - Store icon: `integrations/browser-extension/icon128.png`

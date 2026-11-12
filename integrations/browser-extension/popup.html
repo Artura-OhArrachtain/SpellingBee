@@ -17,8 +17,10 @@
     <p class="hint">Select text in an editor, or click inside a text field, then open this extension. It works with common web editors. Google Docs users can use the SpellingBee menu add-on.</p>
     <label for="source-text">Text to check</label>
     <textarea id="source-text" maxlength="12000" placeholder="Select text in your page to load it here…"></textarea>
+    <label class="consent-row"><input id="data-consent" type="checkbox"> I understand that the text I check will be sent to my configured SpellingBee app for proofreading.</label>
     <button id="check-button" class="primary" type="button">Check writing</button>
     <p id="status" role="status" aria-live="polite"></p>
+    <p class="privacy-link"><a href="https://github.com/Artura-OhArrachtain/SpellingBee" target="_blank" rel="noreferrer">Read the privacy policy</a></p>
     <section id="result" hidden>
       <label for="corrected-text">Suggestion</label>
       <textarea id="corrected-text" readonly></textarea>

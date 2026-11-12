@@ -2,6 +2,7 @@ const settingsForm = document.querySelector('#settings-form');
 const apiUrlField = document.querySelector('#api-url');
 const sourceField = document.querySelector('#source-text');
 const checkButton = document.querySelector('#check-button');
+const consentCheckbox = document.querySelector('#data-consent');
 const status = document.querySelector('#status');
 const result = document.querySelector('#result');
 const correctedField = document.querySelector('#corrected-text');
@@ -11,10 +12,12 @@ document.addEventListener('DOMContentLoaded', initialize);
 
 async function initialize() {
   const [saved, packaged] = await Promise.all([
-    chrome.storage.local.get(['apiUrl']),
+    chrome.storage.local.get(['apiUrl', 'dataConsentFor']),
     fetch(chrome.runtime.getURL('config.json')).then((response) => response.json()),
   ]);
   apiUrlField.value = saved.apiUrl || packaged.apiUrl || 'http://127.0.0.1:5000';
+  consentCheckbox.checked = saved.dataConsentFor === apiUrlField.value;
+  checkButton.disabled = !consentCheckbox.checked;
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   activeTabId = tab?.id;
   if (!activeTabId || !/^https?:/.test(tab.url || '')) {
@@ -44,13 +47,26 @@ settingsForm.addEventListener('submit', async (event) => {
     if (!permitted) throw new Error('Allow access to the SpellingBee app address to continue.');
     apiUrlField.value = address.origin.replace(/\/$/, '');
     await chrome.storage.local.set({ apiUrl: apiUrlField.value });
-    setStatus('App address saved.');
+    await chrome.storage.local.remove('dataConsentFor');
+    consentCheckbox.checked = false;
+    checkButton.disabled = true;
+    setStatus('App address saved. Accept the data notice before checking text.');
   } catch (error) {
     setStatus(error.message || 'Enter a valid app address.', true);
   }
 });
 
+consentCheckbox.addEventListener('change', async () => {
+  checkButton.disabled = !consentCheckbox.checked;
+  if (consentCheckbox.checked) {
+    await chrome.storage.local.set({ dataConsentFor: apiUrlField.value.trim().replace(/\/$/, '') });
+  } else {
+    await chrome.storage.local.remove('dataConsentFor');
+  }
+});
+
 checkButton.addEventListener('click', async () => {
+  if (!consentCheckbox.checked) return setStatus('Accept the data notice before checking text.', true);
   const text = sourceField.value.trim();
   if (!text) return setStatus('Select text or click inside an editor first.', true);
   if (text.length > 12000) return setStatus('Select 12,000 characters or fewer.', true);
