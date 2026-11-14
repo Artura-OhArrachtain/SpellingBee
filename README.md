@@ -66,9 +66,9 @@ You can also choose **Open a document** to load text from TXT, Markdown, DOCX, o
 Google Docs draws document text on a canvas, so a normal browser extension cannot reliably read or replace its document selection. Use the Google Docs sidebar integration instead:
 
 1. Open **Extensions → Apps Script** in the document.
-2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest.
+2. Paste `Code.gs` into the script editor. Add an HTML file named `Sidebar` and paste `Sidebar.html`. In **Project Settings**, enable **Show `appsscript.json` manifest file** and replace its contents with the provided manifest. The manifest also exposes a CardService homepage for deployed Google Workspace add-ons.
 3. Save and reload the document. The integration connects automatically to `https://tab.pythonanywhere.com`.
-4. Choose **SpellingBee → Open writing checker**, select a passage, and choose **Check selection**. Review the suggested text in the sidebar, then choose **Apply and highlight** to replace the selected passage and highlight the changed portions directly in the document.
+4. Choose **SpellingBee → Open writing checker**, select a passage, and choose **Check selection**. Review the suggested text in the sidebar, then choose **Apply and highlight** to replace the selected passage and highlight the changed portions directly in the document. When deployed as a Google Workspace add-on, its homepage card also provides **Locate** and **Accept** actions for the first changed span returned by the proofreading API.
 
 The Docs integration connects to `https://tab.pythonanywhere.com` and replaces a selection within one paragraph to preserve surrounding formatting. It keeps the original selection pending while you review the suggestion, then highlights changed text in yellow and underlines it after you choose **Apply and highlight**. It uses the same `/api/proofread` endpoint as the browser extension, but keeps the Google Docs selection and review flow inside Apps Script.
 

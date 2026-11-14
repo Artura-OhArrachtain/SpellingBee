@@ -13,6 +13,133 @@ function showSpellingBeeSidebar() {
   DocumentApp.getUi().showSidebar(html);
 }
 
+function onHomepage(e) {
+  return buildCheckerCard();
+}
+
+function buildCheckerCard() {
+  const card = CardService.newCardBuilder();
+  let issues;
+  try {
+    issues = checkGrammarWithApi(DocumentApp.getActiveDocument().getBody().getText());
+  } catch (error) {
+    return card.addSection(CardService.newCardSection()
+      .addWidget(CardService.newTextParagraph().setText(escapeCardText(error.message || 'Could not check this document.'))))
+      .build();
+  }
+
+  const refreshAction = CardService.newAction()
+    .setFunctionName('refreshChecker');
+  card.setHeader(CardService.newCardHeader()
+    .setTitle('Grammar Suggestions')
+    .setSubtitle(issues.length + ' issue(s) found'))
+    .addCardAction(CardService.newCardAction()
+      .setText('Re-scan Document')
+      .setOnClickAction(refreshAction))
+    .setFixedFooter(CardService.newFixedFooter()
+      .setPrimaryButton(CardService.newTextButton()
+        .setText('Re-scan Document')
+        .setOnClickAction(refreshAction)));
+
+  if (issues.length === 0) {
+    return card.addSection(CardService.newCardSection()
+      .addWidget(CardService.newTextParagraph().setText('No spelling or grammar issues found.')))
+      .build();
+  }
+
+  issues.forEach(function (issue) {
+    const locateAction = CardService.newAction()
+      .setFunctionName('highlightIssue')
+      .setParameters({
+        targetText: issue.original,
+        occurrenceIndex: String(issue.occurrenceIndex),
+      });
+    const fixAction = CardService.newAction()
+      .setFunctionName('applyCorrection')
+      .setParameters({
+        targetText: issue.original,
+        replacementText: issue.suggestion,
+        occurrenceIndex: String(issue.occurrenceIndex),
+      });
+    const section = CardService.newCardSection()
+      .addWidget(CardService.newDecoratedText()
+        .setTopLabel(issue.ruleName)
+        .setText('<b>' + escapeCardText(issue.original) + '</b> → <font color="#188038"><b>'
+          + escapeCardText(issue.suggestion) + '</b></font>')
+        .setWrapText(true))
+      .addWidget(CardService.newTextParagraph().setText(escapeCardText(issue.message)))
+      .addWidget(CardService.newButtonSet()
+        .addButton(CardService.newTextButton().setText('Locate').setOnClickAction(locateAction))
+        .addButton(CardService.newTextButton()
+          .setText('Accept')
+          .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
+          .setOnClickAction(fixAction)));
+    card.addSection(section);
+  });
+  return card.build();
+}
+
+function refreshChecker(e) {
+  return CardService.newActionResponseBuilder()
+    .setNavigation(CardService.newNavigation().updateCard(buildCheckerCard()))
+    .setNotification(CardService.newNotification().setText('Document re-scanned.'))
+    .build();
+}
+
+function checkGrammarWithApi(text) {
+  if (!text || !text.trim()) return [];
+  if (text.length > 12000) throw new Error('This document is longer than the 12,000-character check limit.');
+  const response = UrlFetchApp.fetch(getSpellingBeeAppUrl() + '/api/proofread', {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify({ text: text }),
+    muteHttpExceptions: true,
+  });
+  const status = response.getResponseCode();
+  const data = parseJsonResponse(response);
+  if (status < 200 || status >= 300) throw new Error(data.error || 'The SpellingBee app could not check this document.');
+  if (Array.isArray(data.issues)) return data.issues;
+  return makeIssueFromCorrection(text, data.corrected_text, data.explanation || 'Review this suggested correction.');
+}
+
+function makeIssueFromCorrection(original, corrected, message) {
+  if (typeof corrected !== 'string' || original === corrected) return [];
+  const start = commonPrefixLength(original, corrected);
+  let originalEnd = original.length;
+  let correctedEnd = corrected.length;
+  while (originalEnd > start && correctedEnd > start
+    && original.charAt(originalEnd - 1) === corrected.charAt(correctedEnd - 1)) {
+    originalEnd -= 1;
+    correctedEnd -= 1;
+  }
+  const targetText = original.substring(start, originalEnd);
+  const replacementText = corrected.substring(start, correctedEnd);
+  if (!targetText) return [];
+  return [{
+    ruleName: 'Spelling and grammar',
+    original: targetText,
+    suggestion: replacementText,
+    message: message,
+    occurrenceIndex: countOccurrencesBefore(original, targetText, start),
+  }];
+}
+
+function countOccurrencesBefore(text, target, endOffset) {
+  let count = 0;
+  let offset = 0;
+  while (offset < endOffset) {
+    const found = text.indexOf(target, offset);
+    if (found < 0 || found >= endOffset) break;
+    count += 1;
+    offset = found + target.length;
+  }
+  return count;
+}
+
+function escapeCardText(text) {
+  return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function configureSpellingBee() {
   const ui = DocumentApp.getUi();
   const result = ui.prompt(
@@ -138,6 +265,59 @@ function checkAndMarkSelection() {
   if (!result.unchanged) return applyPendingSuggestion();
   PropertiesService.getUserProperties().deleteProperty('spellingBeePending');
   return 'No corrections suggested.';
+}
+
+function applyCorrection(e) {
+  const target = e.parameters.targetText;
+  const replacement = e.parameters.replacementText;
+  const occurrenceIndex = Number(e.parameters.occurrenceIndex || 0);
+  const doc = DocumentApp.getActiveDocument();
+  const foundRange = findTextOccurrence(doc.getBody(), target, occurrenceIndex);
+  if (!foundRange) {
+    return CardService.newActionResponseBuilder()
+      .setNotification(CardService.newNotification().setText('Could not find that text. Refresh the suggestions.'))
+      .build();
+  }
+  const element = foundRange.getElement().asText();
+  const start = foundRange.getStartOffset();
+  const end = foundRange.getEndOffsetInclusive();
+  element.deleteText(start, end);
+  element.insertText(start, replacement);
+  return CardService.newActionResponseBuilder()
+    .setNavigation(CardService.newNavigation().updateCard(buildCheckerCard()))
+    .build();
+}
+
+function highlightIssue(e) {
+  const target = e.parameters.targetText;
+  const occurrenceIndex = Number(e.parameters.occurrenceIndex || 0);
+  const doc = DocumentApp.getActiveDocument();
+  const foundRange = findTextOccurrence(doc.getBody(), target, occurrenceIndex);
+  if (!foundRange) {
+    return CardService.newActionResponseBuilder()
+      .setNotification(CardService.newNotification().setText('Could not find that text. Refresh the suggestions.'))
+      .build();
+  }
+  const rangeBuilder = doc.newRange();
+  rangeBuilder.addElement(
+    foundRange.getElement(),
+    foundRange.getStartOffset(),
+    foundRange.getEndOffsetInclusive(),
+  );
+  doc.setSelection(rangeBuilder.build());
+  return CardService.newActionResponseBuilder()
+    .setNotification(CardService.newNotification().setText('Located the suggested text in the document.'))
+    .build();
+}
+
+function findTextOccurrence(body, target, occurrenceIndex) {
+  const pattern = escapeRegex(target);
+  let found = null;
+  for (let index = 0; index <= occurrenceIndex; index += 1) {
+    found = found ? body.findText(pattern, found) : body.findText(pattern);
+    if (!found) return null;
+  }
+  return found;
 }
 
 function parseJsonResponse(response) {
