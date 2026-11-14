@@ -134,7 +134,6 @@ def extension_install_page():
 def privacy_policy():
     return render_template("privacy.html")
 
-
 @app.get("/api/health")
 def health():
     return jsonify(status="ok")

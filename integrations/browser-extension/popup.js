@@ -28,6 +28,10 @@ async function initialize() {
     setStatus('For Google Docs, use Extensions → Apps Script and the SpellingBee sidebar add-on.', true);
     return;
   }
+  if (new URL(tab.url).hostname === 'docs.google.com') {
+    setStatus('For Google Docs, use Extensions → Apps Script and the SpellingBee sidebar add-on.', true);
+    return;
+  }
 
   try {
     const [page] = await chrome.scripting.executeScript({ target: { tabId: activeTabId }, func: captureEditorText });
