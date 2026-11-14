@@ -5,31 +5,82 @@
   <style>
     body { padding: 14px; color: #22251f; font: 13px/1.5 Arial, sans-serif; }
     p { color: #77796f; }
-    textarea { box-sizing: border-box; width: 100%; min-height: 145px; padding: 9px; border: 1px solid #dedfd7; border-radius: 6px; font: inherit; }
+    textarea { box-sizing: border-box; width: 100%; min-height: 115px; padding: 9px; border: 1px solid #dedfd7; border-radius: 6px; font: inherit; resize: vertical; }
     button { margin: 8px 6px 0 0; padding: 9px 12px; border: 0; border-radius: 6px; background: #365d45; color: white; cursor: pointer; }
     button.secondary { border: 1px solid #cfd9cb; background: #edf2ea; color: #294b37; }
+    button:disabled { cursor: wait; opacity: .65; }
+    #result { margin-top: 16px; }
+    #result h3 { margin-bottom: 6px; font-size: 13px; }
+    #explanation { color: #77796f; }
     #status { min-height: 20px; color: #5f725d; }
+    .error { color: #a33c2f !important; }
   </style>
 </head>
 <body>
   <h2>SpellingBee</h2>
-  <p>Select a passage in the document, then click the button below. SpellingBee will apply and highlight suggested corrections directly in the document.</p>
-  <button id="check" type="button" onclick="checkSelectedText()">Mark corrections</button>
+  <p>Select a passage in the document, then check it here. Review the suggestion before applying it to the document.</p>
+  <button id="check" type="button" onclick="checkSelectedText()">Check selection</button>
   <p id="status" role="status" aria-live="polite"></p>
+  <section id="result" hidden>
+    <h3>Suggested text</h3>
+    <textarea id="suggestion" readonly></textarea>
+    <p id="explanation"></p>
+    <button id="apply" type="button" onclick="applySuggestion()">Apply and highlight</button>
+  </section>
   <script>
+    var checkButton = document.getElementById('check');
+    var applyButton = document.getElementById('apply');
+    var result = document.getElementById('result');
+    var suggestion = document.getElementById('suggestion');
+    var explanation = document.getElementById('explanation');
+    var status = document.getElementById('status');
+
     function checkSelectedText() {
-      document.getElementById('check').disabled = true;
-      document.getElementById('status').textContent = 'Checking and marking your writing…';
-      google.script.run.withSuccessHandler(function (message) {
-        document.getElementById('check').disabled = false;
-        document.getElementById('status').textContent = message;
+      setBusy(checkButton, 'Checking…');
+      result.hidden = true;
+      status.className = '';
+      status.textContent = 'Checking your writing…';
+      google.script.run.withSuccessHandler(function (data) {
+        checkButton.disabled = false;
+        checkButton.textContent = 'Check selection';
+        if (data.unchanged) {
+          status.textContent = 'No corrections suggested.';
+          return;
+        }
+        suggestion.value = data.corrected;
+        explanation.textContent = data.explanation || 'Review the suggested text before applying it.';
+        result.hidden = false;
+        status.textContent = 'Suggestion ready. Keep the original passage selected to apply it.';
       }).withFailureHandler(function (error) {
-        document.getElementById('check').disabled = false;
+        checkButton.disabled = false;
+        checkButton.textContent = 'Check selection';
         showError(error);
-      }).checkAndMarkSelection();
+      }).checkSelection();
     }
+
+    function applySuggestion() {
+      setBusy(applyButton, 'Applying…');
+      google.script.run.withSuccessHandler(function (message) {
+        applyButton.disabled = false;
+        applyButton.textContent = 'Apply and highlight';
+        result.hidden = true;
+        status.className = '';
+        status.textContent = message;
+      }).withFailureHandler(function (error) {
+        applyButton.disabled = false;
+        applyButton.textContent = 'Apply and highlight';
+        showError(error);
+      }).applyPendingSuggestion();
+    }
+
+    function setBusy(button, label) {
+      button.disabled = true;
+      button.textContent = label;
+    }
+
     function showError(error) {
-      document.getElementById('status').textContent = error.message || 'Something went wrong.';
+      status.className = 'error';
+      status.textContent = error.message || 'Something went wrong.';
     }
   </script>
 </body>

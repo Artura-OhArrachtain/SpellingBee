@@ -12,6 +12,55 @@ function showSpellingBeeSidebar() {
   DocumentApp.getUi().showSidebar(html);
 }
 
+function checkSelection() {
+  const text = getCurrentSelectionText();
+  const response = UrlFetchApp.fetch(SPELLINGBEE_APP_URL + '/api/proofread', {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify({ text: text }),
+    muteHttpExceptions: true,
+  });
+  const status = response.getResponseCode();
+  const result = parseJsonResponse(response);
+  if (status < 200 || status >= 300) throw new Error(result.error || 'The SpellingBee app could not check this text.');
+  if (typeof result.corrected_text !== 'string') throw new Error('SpellingBee returned an invalid suggestion.');
+
+  PropertiesService.getUserProperties().setProperty('spellingBeePending', JSON.stringify({
+    documentId: DocumentApp.getActiveDocument().getId(),
+    original: text,
+    corrected: result.corrected_text,
+  }));
+  return {
+    original: text,
+    corrected: result.corrected_text,
+    explanation: result.explanation || '',
+    unchanged: result.corrected_text.trim() === text.trim(),
+  };
+}
+
+function applyPendingSuggestion() {
+  const pendingValue = PropertiesService.getUserProperties().getProperty('spellingBeePending');
+  if (!pendingValue) throw new Error('Check a selection first.');
+  let pending;
+  try {
+    pending = JSON.parse(pendingValue);
+  } catch (error) {
+    PropertiesService.getUserProperties().deleteProperty('spellingBeePending');
+    throw new Error('The pending suggestion expired. Check the selection again.');
+  }
+
+  if (pending.documentId !== DocumentApp.getActiveDocument().getId()) {
+    throw new Error('This suggestion belongs to another document. Check the current selection again.');
+  }
+  const current = getCurrentSelectionText();
+  if (current !== pending.original) {
+    throw new Error('The document selection changed. Select the original passage again, then apply the suggestion.');
+  }
+  markSelection(pending.original, pending.corrected);
+  PropertiesService.getUserProperties().deleteProperty('spellingBeePending');
+  return 'Correction applied and highlighted in the document.';
+}
+
 function getCurrentSelectionText() {
   const selection = DocumentApp.getActiveDocument().getSelection();
   if (!selection) throw new Error('Select text in the document first.');
@@ -29,20 +78,10 @@ function getCurrentSelectionText() {
 }
 
 function checkAndMarkSelection() {
-  const text = getCurrentSelectionText();
-  const response = UrlFetchApp.fetch(SPELLINGBEE_APP_URL + '/api/proofread', {
-    method: 'post',
-    contentType: 'application/json',
-    payload: JSON.stringify({ text: text }),
-    muteHttpExceptions: true,
-  });
-  const status = response.getResponseCode();
-  const result = parseJsonResponse(response);
-  if (status < 200 || status >= 300) throw new Error(result.error || 'The SpellingBee app could not check this text.');
-  markSelection(text, result.corrected_text);
-  return result.corrected_text.trim() === text.trim()
-    ? 'No corrections suggested.'
-    : 'Corrections were applied and highlighted in the document.';
+  const result = checkSelection();
+  if (!result.unchanged) return applyPendingSuggestion();
+  PropertiesService.getUserProperties().deleteProperty('spellingBeePending');
+  return 'No corrections suggested.';
 }
 
 function parseJsonResponse(response) {
